@@ -130,6 +130,7 @@ hr {
 }
 .navbar-custom .nav li.active {
 	outline: 0;
+	color: #D59F26;
 }
 .navbar-custom .nav li.active a {
 	background-color: rgba(255,255,255,.3);
@@ -175,7 +176,7 @@ hr {
 	text-align: center;
 	color: #fff;
 	background: url(../img/intro-bg.jpg) no-repeat center top;
-	background-color: #D59F26;
+	background-color: #121d1f;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	background-size: cover;
@@ -434,7 +435,7 @@ ol.type li a:hover {
 	position: absolute;
 	top: 0;
 	bottom: 0;
-	left: 40px;
+	left: 70px;
 	width: 2px;
 	margin-left: -1.5px;
 	background-color: #eee;
@@ -475,7 +476,7 @@ ol.type li a:hover {
 	z-index: 100;
 	position: absolute;
 	/* left: 0; */
-	width: 70px;
+	width: 140px;
 	height: 70px;
 	/* margin-left: 0; */
 	/* border: 1px solid #eee; */
@@ -483,14 +484,14 @@ ol.type li a:hover {
 	text-align: center;
 	/* background: #fff; */
 	/* [disabled]opacity: 0.7; */
+
 }
 .timeline>li .timeline-image h4 { 
-	/* margin-top: 20px; */
-	font-size: 10px;
+	margin-top: 5px;
+	font-size: 11px;
 	/* text-transform: uppercase; */
 	color: #090B26;
 	font-weight:bold;
-	/*padding: 0 -20px 0 100px;*/
 
 }
 .timeline>li.timeline-inverted>.timeline-panel {
@@ -707,7 +708,7 @@ header .intro-text {
 	/* width: 60px; */
 	/* height: 60px; */
         /* margin-left: -50px; */ 
- 	left: 50%;
+ 	left: 49%;
         padding: 0;
 	width: 40px;
 	height: 40px;
@@ -718,7 +719,7 @@ header .intro-text {
 	/* line-height: 18px; */
 	/* font-weight: 400; */
 	margin-top: 10px;
-        margin-left: -200px; 
+        margin-left: -230px; 
 	font-weight: bold;
         font-size: 16px;
 }
@@ -753,7 +754,7 @@ header .intro-text {
 	/* font-size: 10px; */
 	/* line-height: 26px; */
 	margin-top: 10px;
-        margin-left: -90px;
+        margin-left: -160px;
 	font-weight: bold;
         font-size: 16px;
 }
@@ -778,7 +779,7 @@ header .intro-text {
 }
 .timeline>li .timeline-image h4 {
 	margin-top: 10px;
-        margin-left: -90px;
+        margin-left: -160px;
 	font-weight: bold;
         font-size: 16px;
 }
