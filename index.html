@@ -1,4 +1,4 @@
-<DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -24,6 +24,115 @@
 <link rel="stylesheet" type="text/css" href="mypage/css/prettyPhoto.css">
 <script type="text/javascript" src="mypage/js/modernizr.custom.js"></script>
 
+<!-- Custom Styles for Button Links and Timeline -->
+<style>
+/* Button styles for publication links - inline with white border and black text */
+.publication-links {
+    display: inline;
+    margin-left: 5px;
+}
+
+.publication-links .btn-link {
+    display: inline-block;
+    padding: 2px 6px;
+    margin: 0 2px;
+    background-color: white;
+    color: #333;
+    text-decoration: none;
+    border: 1px solid #333;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.publication-links .btn-link:hover {
+    background-color: #333;
+    color: white;
+    text-decoration: none;
+}
+
+.publication-links .btn-link:focus {
+    color: #333;
+    text-decoration: none;
+}
+
+/* Simple compact timeline styles - minimal space usage, left aligned */
+.timeline-compact {
+    max-width: 730px;
+    margin: 0 auto;
+    padding: 10px 0;
+    text-align: left;
+}
+
+.timeline-item-compact {
+    margin-bottom: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.timeline-item-compact:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.timeline-date-compact {
+    font-size: 13px;
+    color: #CDA142;
+    font-weight: 600;
+    display: inline-block;
+    width: 180px;
+    margin-right: 20px;
+    vertical-align: top;
+}
+
+.timeline-content-compact {
+    display: inline-block;
+    width: calc(100% - 160px);
+    vertical-align: top;
+}
+
+.timeline-title-compact {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 2px;
+}
+
+.timeline-subtitle-compact {
+    font-size: 11px;
+    color: #666;
+    line-height: 1.2;
+    margin-bottom: 1px;
+}
+
+.timeline-subtitle-compact a {
+    color: #ee7e23dd;
+    text-decoration: underline;
+}
+
+/* Override original timeline for compact version */
+.timeline {
+    display: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .timeline-date-compact {
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 5px;
+        display: block;
+    }
+    
+    .timeline-content-compact {
+        width: 100%;
+        display: block;
+    }
+}
+</style>
+
 <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
@@ -41,7 +150,7 @@
         <div class="intro-text">
           <h1>Hello, I am <span class="name">Ying Zhang</span></h1>
           <p>&nbsp;</p>
-          <a href="#about" class="btn btn-default btn-lg page-scroll">More</a> </div>
+       </div>
       </div>
     </div>
   </div>
@@ -72,7 +181,8 @@
 <div id="about">
   <div class="container">
     <div class="section-title text-center center">
-      <h2>About Ying Zhang (张莹)</h2>
+      <h2>About</h2>
+      <div class="timeline-title-compact">Ying Zhang (张莹)</div>
       <div id="pronounceLink" style="display:block;"><p><a href="#" onclick="$('#pronounce').toggle(); return false;"><i>How to pronounce?</i></a></p></div> <div id="pronounce" style="display:none;" class="alert">
         <audio controls>
             <source src="mypage/audio/pronounce.mp3" type="audio/mpeg">
@@ -84,29 +194,18 @@
       <div class="col-md-12 text-center"><img src="mypage/img/ZHANGYING.jpeg" class="img-responsive"></div>
       <div class="col-md-8 col-md-offset-2">
         <div class="about-text">
-          <p style="margin-bottom:0px">I am a postdoc in the <a href="https://www.riken.jp/en/research/labs/aip/goalorient_tech/nat_lang_understand/", style="text-decoration:underline", target="_blank">Natural Language Understanding Team</a>, <a href="https://www.riken.jp/en/research/labs/aip/", style="text-decoration:underline", target="_blank">RIKEN Center for Advanced Intelligence Project (AIP)</a>, under the supervision of <a href="https://www.cl.ecei.tohoku.ac.jp/~inui/", style="text-decoration:underline", target="_blank">Prof. Kentaro Inui</a> at <a href="https://www.nlp.ecei.tohoku.ac.jp/", style="text-decoration:underline", target="_blank">Tohoku University</a>.</p>
+          <p style="margin-bottom:0px">I am a postdoc in the <a href="https://www.riken.jp/en/research/labs/aip/goalorient_tech/nat_lang_understand/" style="text-decoration:underline" target="_blank">Natural Language Understanding Team</a>, <a href="https://www.riken.jp/en/research/labs/aip/" style="text-decoration:underline" target="_blank">RIKEN Center for Advanced Intelligence Project (AIP)</a>, under the supervision of <a href="https://www.cl.ecei.tohoku.ac.jp/~inui/" style="text-decoration:underline" target="_blank">Prof. Kentaro Inui</a> at <a href="https://www.nlp.ecei.tohoku.ac.jp/" style="text-decoration:underline" target="_blank">Tohoku University</a>.</p>
 
-
-          <p>Thank you for your interest in my profile! I am working in natural language processing, to track my newest publications, you can also visit my <a href="https://orcid.org/0009-0000-9627-8768", style="text-decoration:underline", target="_blank">ORCID</a>, <a href="https://www.semanticscholar.org/author/Ying-Zhang/2153391362", style="text-decoration:underline", target="_blank">Semantic Scholar</a>, or <a href="https://scholar.google.com/citations?user=tbDNsHsAAAAJ&hl=en&sortby=pubdate", style="text-decoration:underline", target="_blank">Google Scholar</a>. </p>
+          <p>Thank you for your interest in my profile! I am working in natural language processing, to track my newest publications, you can also visit my <a href="https://orcid.org/0009-0000-9627-8768" style="text-decoration:underline" target="_blank">ORCID</a>, <a href="https://www.semanticscholar.org/author/Ying-Zhang/2153391362" style="text-decoration:underline" target="_blank">Semantic Scholar</a>, or <a href="https://scholar.google.com/citations?user=tbDNsHsAAAAJ&hl=en&sortby=pubdate" style="text-decoration:underline" target="_blank">Google Scholar</a>. </p>
           <!-- <p class="text-center"><a href="YingZhang_Academic_CV.pdf" class="btn btn-primary"><i class="fa fa-download"></i> Download CV</a></p>-->
        </div>
       </div>
     </div>
     <div class="row col-md-4 col-md-offset-2"><p style="color:black;font-size:150%;margin-bottom:5px">Newest Publications</p></div>
       <div class="col-md-8 col-md-offset-2">
-        <ol>
-          <li><p style="margin-top:0px;margin-bottom:10px"> &bull; Yiqian Huang, <b>Ying Zhang*</b>,  Kotaro Funakoshi, Manabu Okumura, Yang Cao. “<a href="", style="text-decoration:underline", target="_blank"><b>S2N: A Synthetic Data-Driven Approach for Speaker-to-Dialogue Attribution in Novels.</b></a>,” <i>In International Joint Conference on Neural Networks (IJCNN2025)</i>.</p></li> 
-          <li><p style="margin-top:0px;margin-bottom:10px"> &bull; Dongyuan Li, Satoshi Kosugi, <b>Ying Zhang*</b>, Manabu Okumura, Feng Xia, Renhe Jiang. “<a href="https://openreview.net/forum?id=QOxEHegLSg#discussion", style="text-decoration:underline", target="_blank"><b>Revisiting Dynamic Graph Clustering via Matrix Factorization.</b></a>,” <i>In International World Wide Web Conference 2025 (WWW 2025)</i>.</p></li> 
-          <li><p style="margin-top:0px;margin-bottom:10px"> &bull; Dongyuan Li, <b>Ying Zhang*</b>, Zhen Wang, Shiyin Tan, Satoshi Kosugi, and Manabu Okumura. “<a href="https://aclanthology.org/2024.findings-emnlp.523/", style="text-decoration:underline", target="_blank"><b>Active Learning for Abstractive Text Summarization via LLM-Determined Curriculum and Certainty Gain Maximization</b></a>,” <i>In Findings of the Association for Computational Linguistics: EMNLP 2024</i>.</p></li> 
-          <li><p style="margin-top:0px;margin-bottom:10px"> &bull; Yusong Wang, <b>Ying Zhang*</b>, Dongyuan Li, Jialun Shen, Yicheng Xu, Mingkun Xu, Kotaro Funakoshi, and Manabu Okumura. “<a href="https://link.springer.com/chapter/10.1007/978-981-96-0119-6_32", style="text-decoration:underline", target="_blank"><b>FINE-LMT: Fine-grained Feature Learning for Multi-Modal Machine Translation </b></a>,” <i>In The Pacific Rim International Conference on Artificial Intelligence (PRICAI 2024)</i>.</p></li> 
-          <li><p style="margin-top:0px;margin-bottom:10px"> &bull; Shiyin Tan, Dongyuan Li, Renhe Jiang, <b>Ying Zhang*</b>, and Manabu Okumura. “<a href="https://icml.cc/virtual/2024/poster/33530", style="text-decoration:underline", target="_blank"><b>Community-Invariant Graph Contrastive Learning</b></a>,” <i>In Forty-first International Conference on Machine Learning (ICML 2024)</i>.[<a href="https://proceedings.mlr.press/v235/tan24b.html", style="text-decoration:underline", target="_blank">paper</a>]</p></li> 
-          <li><p style="margin-top:0px;margin-bottom:10px"> &bull; Dongyuan Li, <b>Ying Zhang*</b>, Yusong Wang, Kataro Funakoshi, and Manabu Okumura. “<a href="https://www.jstage.jst.go.jp/article/jnlp/31/3/31_825/_article/-char/ja/", style="text-decoration:underline", target="_blank"><b>Active Learning with Task Adaptation Pre-training for Speech Emotion Recognition</b></a>,” <i>Journal of Natural Language Processing (JNLP 2024)</i>.[<a href="https://www.jstage.jst.go.jp/article/jnlp/31/3/31_825/_pdf/-char/ja", style="text-decoration:underline", target="_blank">paper</a>]</p></li> 
-          <li><p style="margin-top:0px;margin-bottom:10px"> &bull; <b>Ying Zhang*</b>, Hidetaka Kamigaito, and Manabu Okumura. “<a href="https://www.jstage.jst.go.jp/article/jnlp/31/1/31_3/_article/-char/ja", style="text-decoration:underline", target="_blank"><b>Bidirectional Transformer Reranker for Grammatical Error Correction</b></a>,” <i>Journal of Natural Language Processing (JNLP 2024), Volume 31, Issue 1</i>. [<a href="https://www.jstage.jst.go.jp/article/jnlp/31/1/31_3/_pdf/-char/ja", style="text-decoration:underline", target="_blank">paper</a>]</p></li> 
-          <li><p style="margin-top:0px;margin-bottom:10px"> &bull; <b>Ying Zhang*</b>, Hidetaka Kamigaito, and Manabu Okumura. “<a href="https://aclanthology.org/2023.findings-acl.234/", style="text-decoration:underline", target="_blank"><b>Bidirectional Transformer Reranker for Grammatical Error Correction</b></a>,” <i>In Findings of the Association for Computational Linguistics: ACL 2023, pp. 3801-3825, long paper</i>. [<a href="https://aclanthology.org/2023.findings-acl.234.pdf", style="text-decoration:underline", target="_blank">paper</a>, <a href="https://aclanthology.org/2023.findings-acl.234.bib", style="text-decoration:underline", target="_blank">bib</a>, <a href="paper_document/btr_presentation.pdf", style="text-decoration:underline", target="_blank">presentation</a>, <a href="paper_document/btr_poster.pdf", style="text-decoration:underline", target="_blank">poster</a>, <a href="https://github.com/zhangying9128/BTR", style="text-decoration:underline", target="_blank">code</a>]</p></li> 
-          <li><p style="margin-top:0px;margin-bottom:10px"> &bull; <b>Ying Zhang*</b>, Hidetaka Kamigaito, Tatsuya Aoki, Hiroya Takamura, and Manabu Okumura. “<a href="https://www.jstage.jst.go.jp/article/jnlp/30/2/30_401/_article/-char/en", style="text-decoration:underline"><b>Generic Mechanism for Reducing Repetitions in Encoder-Decoder Models</b></a>,” <i>Journal of Natural Language Processing (JNLP 2023), Volume 30, Issue 2, pp. 401-431</i>. [<a href="https://www.jstage.jst.go.jp/article/jnlp/30/2/30_401/_pdf/-char/en", style="text-decoration:underline", target="_blank">paper</a>, <a href="https://www.jstage.jst.go.jp/AF06S010ShoshJkuDld?sryCd=jnlp&noVol=30&noIssue=2&kijiCd=30_401&kijiLangKrke=en&kijiToolIdHkwtsh=AT0073&request_locale=EN", style="text-decoration:underline", target="_blank">bib</a>, <a href="https://github.com/zhangying9128/RRM", style="text-decoration:underline", target="_blank">code</a>]</p></li>
-          <li><p style="margin-top:0px;margin-bottom:10px"> &bull; <b>Ying Zhang*</b>, Hidetaka Kamigaito, and Manabu Okumura. “<a href="https://aclanthology.org/2021.emnlp-main.188", style="text-decoration:underline", target="_blank"><b>A Language Model-based Generative Classifier for Sentence-level Discourse Parsing</b></a>,” <i>In Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing (EMNLP 2021), pp. 2432-2446, long paper</i>. [<a href="https://aclanthology.org/2021.emnlp-main.188.pdf", style="text-decoration:underline", target="_blank">paper</a>, <a href="https://aclanthology.org/2021.emnlp-main.188.bib", style="text-decoration:underline", target="_blank">bib</a>, <a href="paper_document/lmgc_presentation.pdf", style="text-decoration:underline", target="_blank">presentation</a>, <a href="paper_document/lmgc_poster.pdf", style="text-decoration:underline", target="_blank">poster</a>, <a href="https://github.com/zhangying9128/LMGC", style="text-decoration:underline", target="_blank">code</a>]</p></li>
-          <li><p style="margin-top:0px;margin-bottom:0px"> &bull; <b>Ying Zhang*</b>, Hidetaka Kamigaito, Tatsuya Aoki, Hiroya Takamura, and Manabu Okumura. “<a href="https://aclanthology.org/2021.ranlp-1.180", style="text-decoration:underline", target="_blank"><b>Generic Mechanism for Reducing Repetitions in Encoder-Decoder Models</b></a>,” <i>In Proceedings of the International Conference Recent Advances in Natural Language Processing (RANLP 2021), pp. 1606-1615</i>. [<a href="https://aclanthology.org/2021.ranlp-1.180.pdf", style="text-decoration:underline", target="_blank">paper</a>, <a href="https://aclanthology.org/2021.ranlp-1.180.bib", style="text-decoration:underline", target="_blank">bib</a>, <a href="paper_document/rrm_presentation.pdf", style="text-decoration:underline", target="_blank">presentation</a>, <a href="https://github.com/zhangying9128/RRM", style="text-decoration:underline", target="_blank">code</a>]</p></li>
-        </ol>
+        <div class="publications-list">
+          <!-- Publications will be populated here -->
+        </div>
       </div>
   </div>
 </div>
@@ -121,7 +220,7 @@
       <div class="col-md-8 col-md-offset-2">
         <div class="about-text">
           <p style="margin-bottom:0px">My research focuses on natural language processing that utilizes computers to understand the text as human beings. Specifically, I am passionate about developing general functions and mechanisms that can be easily applied to pretrained large language models across various natural language generation tasks to enhance results. </p>
-          <p style="margin-bottom:0px">For instance, I am particularly interested in addressing the issue of text degeneration. This involves training deep neural networks to assign higher probabilities for natural and grammatical texts compared to bland and repetitive texts when using likelihood as a decoding objective (<a href="https://openreview.net/forum?id=rygGQyrFvH", style="text-decoration:underline;style="color: #000;", target="_blank">Holtzman et al. 2020</a>). It is included in my Ph.D. dissertation: <a href="https://t2r2.star.titech.ac.jp/rrws/file/CTT100914322/ATD100000413/", style="text-decoration:underline", target="_blank"><b>Addressing Text Degeneration of Discriminative Models with Re-ranking Methods</b></a>.</p>
+          <p style="margin-bottom:0px">For instance, I am particularly interested in addressing the issue of text degeneration. This involves training deep neural networks to assign higher probabilities for natural and grammatical texts compared to bland and repetitive texts when using likelihood as a decoding objective (<a href="https://openreview.net/forum?id=rygGQyrFvH" style="text-decoration:underline" target="_blank">Holtzman et al. 2020</a>). It is included in my Ph.D. dissertation: <a href="https://t2r2.star.titech.ac.jp/rrws/file/CTT100914322/ATD100000413/" style="text-decoration:underline" target="_blank"><b>Addressing Text Degeneration of Discriminative Models with Re-ranking Methods</b></a>.</p>
           <!-- <p style="margin-bottom:0px">I am currently working on </p> -->
        </div>
       </div>
@@ -129,7 +228,7 @@
     <div class="row col-md-4 col-md-offset-2"><p style="color:black;font-size:150%;margin-bottom:5px">Research Funding</p></div>
       <div class="col-md-8 col-md-offset-2">
         <ol>
-          <li><p style="margin-top:0px;margin-bottom:10px"> &bull; RIKEN Incentive Research Projects (3,000,000 JPY), April 2025 — March 2027. </i></p></li> 
+          <li><p style="margin-top:0px;margin-bottom:10px"> &bull; RIKEN Incentive Research Projects (3,000,000 JPY), April 2025 — March 2027.</p></li> 
         </ol>
       </div>
   </div>
@@ -144,82 +243,15 @@
     </div>
     <div class="row">
       <div class="col-lg-12">
-        <ul class="timeline">
-          <li class="timeline-inverted">
-            <div class="timeline-image">
-                <h4>2024 May - Now &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h4>
-            </div>
-            <div class="timeline-panel">
-              <div class="timeline-heading">
-                <h4><a href="https://www.riken.jp/en/research/labs/aip/index.html", target="_blank">RIKEN</a> </h4>
-                <h4 class="subheading">Postdoc in <a href="https://www.riken.jp/en/research/labs/aip/goalorient_tech/nat_lang_understand/index.html", style="text-decoration:underline", target="_blank">Natural Language Understanding Team</a> </h4>
-                <h4 class="subheading">Advisors: <a href="https://bheinzerling.github.io/", style="text-decoration:underline", target="_blank">Dr. Benjamin Heinzerling</a> & <a href="https://www.cl.ecei.tohoku.ac.jp/~inui/", style="text-decoration:underline", target="_blank">Dr. Kentaro Inui</a></h4>
-              </div>
-            </div>
-          </li>
-          <li class="timeline-inverted">
-            <div class="timeline-image">
-                <h4>2023 Nov. - 2024 Apr. </h4>
-            </div>
-            <div class="timeline-panel">
-              <div class="timeline-heading">
-                <h4><a href="https://www.titech.ac.jp/english", target="_blank">Tokyo Institute of Technology</a></h4>
-                <h4 class="subheading">Postdoc in <a href="https://lr-www.pi.titech.ac.jp/wp_en/", style="text-decoration:underline", target="_blank">Okumura-Funakoshi's Lab</a> </h4>
-                <h4 class="subheading">Advisors: <a href="http://www.lr.pi.titech.ac.jp/~oku/index-e.html", style="text-decoration:underline", target="_blank">Dr. Manabu Okumura</a></h4>
-              </div>
-            </div>
-          </li>
-          <li class="timeline-inverted">
-            <div class="timeline-image">
-                <h4>2019 - 2023 </h4>
-            </div>
-            <div class="timeline-panel">
-              <div class="timeline-heading">
-                <h4><a href="https://www.titech.ac.jp/english", target="_blank">Tokyo Institute of Technology</a></h4>
-                <h4 class="subheading">Doctoral course in Information and Communications Engineering</h4>
-                <h4 class="subheading">Research assistant in <a href="https://lr-www.pi.titech.ac.jp/wp_en/", style="text-decoration:underline", target="_blank">Okumura-Funakoshi's Lab</a> and <a href="https://www.riken.jp/en/", style="text-decoration:underline", target="_blank">RIKEN</a></h4>
-                <h4 class="subheading">Advisors: <a href="https://sites.google.com/site/hidetakakamigaito", style="text-decoration:underline", target="_blank">Dr. Hidetaka Kamigaito</a> & <a href="http://www.lr.pi.titech.ac.jp/~oku/index-e.html", style="text-decoration:underline", target="_blank">Dr. Manabu Okumura</a></h4>
-              </div>
-            </div>
-          </li>
-          <li class="timeline-inverted">
-            <div class="timeline-image">
-                <h4>2019 - 2019 </h4>
-            </div>
-            <div class="timeline-panel">
-              <div class="timeline-heading">
-                <h4><a href="https://www.fujitsu.com/global/about/research/", target="_blank">Fujitsu Laboratories LTD.</a></h4>
-                <h4 class="subheading">Research scientist (Intern) in <a href="https://www.fujitsu.com/global/about/research/key-technologies/ai/index.html", style="text-decoration:underline", target="_blank">Artificial Intelligence Laboratory</a> </h4>
-                <h4 class="subheading">Advisor: <a href="https://tma15.github.io/about/", style="text-decoration:underline", target="_blank">Dr. Takuya Makino</a></h4>
-              </div>
-            </div>
-          </li>
-          <li class="timeline-inverted">
-            <div class="timeline-image">
-                <h4>2017 - 2019 </h4>
-            </div>
-            <div class="timeline-panel">
-              <div class="timeline-heading">
-                <h4><a href="https://www.titech.ac.jp/english", target="_blank">Tokyo Institute of Technology</a></h4>
-                <h4 class="subheading">Master's course in Information and Communications Engineering</h4>
-                <h4 class="subheading">Research assistant in <a href="https://lr-www.pi.titech.ac.jp/wp_en/", style="text-decoration:underline", target="_blank">Okumura-Takamura's Lab</a> </h4>
-                <h4 class="subheading">Advisors: <a href="https://sites.google.com/view/hjtakamura/home", style="text-decoration:underline", target="_blank">Dr. Hiroya Takamura</a> & <a href="http://www.lr.pi.titech.ac.jp/~oku/index-e.html", style="text-decoration:underline", target="_blank">Dr. Manabu Okumura</a></h4>
-              </div>
-            </div>
-          </li>
-          <li class="timeline-inverted">
-            <div class="timeline-image">
-                <h4>2013 - 2017 </h4>
-            </div>
-            <div class="timeline-panel">
-              <div class="timeline-heading">
-                <h4><a href="http://english.cqu.edu.cn/", target="_blank">Chongqing University</a></h4>
-                <h4 class="subheading">B.S. in Information Management and Information System</h4>
-                <h4 class="subheading">Advisor: <a href="http://ceba.cqu.edu.cn/info/3075/2785.htm", style="text-decoration:underline", target="_blank">Dr. Xiaoqiang Gao</a></h4>
-              </div>
-            </div>
-          </li>
+        <!-- Original timeline hidden, new compact timeline shown -->
+        <ul class="timeline" style="display: none;">
+          <!-- Original timeline content kept for reference -->
         </ul>
+        
+        <!-- New compact timeline -->
+        <div class="timeline-compact">
+          <!-- Timeline items will be populated here -->
+        </div>
       </div>
     </div>
   </div>
@@ -254,6 +286,9 @@
     </div>
   </div>
 </div>	
+
+<!-- Load data and scripts -->
+<script src="data.js"></script>
 <script type="text/javascript" src="mypage/js/jquery.1.11.1.js"></script> 
 <script type="text/javascript" src="mypage/js/bootstrap.js"></script> 
 <script type="text/javascript" src="mypage/js/SmoothScroll.js"></script> 
@@ -264,5 +299,65 @@
 <script type="text/javascript" src="mypage/js/waypoints.js"></script> 
 <script type="text/javascript" src="mypage/js/jqBootstrapValidation.js"></script> 
 <script type="text/javascript" src="mypage/js/main.js"></script>
+
+<script>
+// Populate publications with button-style links
+function populatePublications() {
+    const publicationsList = document.querySelector('.publications-list');
+    
+    const olElement = document.createElement('ol');
+    
+    publications.forEach((pub, index) => {
+        const liElement = document.createElement('li');
+        
+        let linksHtml = '';
+        if (pub.links.length > 0) {
+            linksHtml = '<span class="publication-links">';
+            pub.links.forEach(link => {
+                linksHtml += `<a href="${link.url}" class="btn-link" target="_blank">${link.text}</a>`;
+            });
+            linksHtml += '</span>';
+        }
+        
+        liElement.innerHTML = `
+            <p style="margin-top:0px;margin-bottom:10px"> 
+                &bull; ${pub.authors}. 
+                "<a  style="text-decoration:underline" target="_blank"><b>${pub.title}</b></a>," 
+                <i>${pub.venue}.</i>${linksHtml}
+            </p>
+        `;
+        olElement.appendChild(liElement);
+    });
+    
+    publicationsList.appendChild(olElement);
+}
+
+// Populate compact timeline
+function populateTimeline() {
+    const timelineContainer = document.querySelector('.timeline-compact');
+    
+    timeline.forEach((item, index) => {
+        const timelineItem = document.createElement('div');
+        timelineItem.className = 'timeline-item-compact';
+        
+        timelineItem.innerHTML = `
+            <div class="timeline-date-compact">${item.date}</div>
+            <div class="timeline-content-compact">
+                <div class="timeline-title-compact">${item.title}</div>
+                <div class="timeline-subtitle-compact">${item.subtitle}</div>
+                <div class="timeline-subtitle-compact">${item.details}</div>
+            </div>
+        `;
+        timelineContainer.appendChild(timelineItem);
+    });
+}
+
+// Initialize page content
+document.addEventListener('DOMContentLoaded', function() {
+    populatePublications();
+    populateTimeline();
+});
+</script>
+
 </body>
 </html>
