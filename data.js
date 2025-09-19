@@ -1,14 +1,21 @@
 // Publications data
 const publications = [
     {
+        title: "DyG-Mamba: Continuous State Space Modeling on Dynamic Graphs",
+        authors: "Dongyuan Li, Shiyin Tan, Ying Zhang*, Ming Jin, Shirui Pan, Manabu Okumura, Renhe Jiang",
+        venue: "The Thirty-Ninth Annual Conference on Neural Information Processing Systems (NeurIPS 2025)",
+        links: [
+        ]
+    },
+    {
         title: "S2N: A Synthetic Data-Driven Approach for Speaker-to-Dialogue Attribution in Novels",
-        authors: "Yiqian Huang, Ying Zhang*, Kotaro Funakoshi, Manabu Okumura, Yang Cao",
+        authors: "Yiqian Huang, Ying Zhang*, Kotaro Funakoshi, Manabu Okumura, and Yang Cao",
         venue: "International Joint Conference on Neural Networks (IJCNN2025)",
-        links: []
+        links: [{ text: "presentation", url: "https://vimeo.com/1095995250" }]
     },
     {
         title: "Revisiting Dynamic Graph Clustering via Matrix Factorization",
-        authors: "Dongyuan Li, Satoshi Kosugi, Ying Zhang*, Manabu Okumura, Feng Xia, Renhe Jiang",
+        authors: "Dongyuan Li, Satoshi Kosugi, Ying Zhang*, Manabu Okumura, Feng Xia, and Renhe Jiang",
         venue: "International World Wide Web Conference 2025 (WWW 2025)",
         links: [
             { text: "paper", url: "https://openreview.net/forum?id=QOxEHegLSg#discussion" }
@@ -149,3 +156,4 @@ const researchFunding = [
         period: "April 2025 — March 2027"
     }
 ];
+
