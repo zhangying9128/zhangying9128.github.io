@@ -117,55 +117,6 @@
     display: none;
 }
 
-/* News section styles */
-.news-section {
-    background-color: #f9f9f9;
-    padding: 40px 0;
-}
-
-.news-list {
-    max-width: 730px;
-    margin: 0 auto;
-    text-align: left;
-}
-
-.news-item {
-    margin-bottom: 18px;
-    padding: 14px 18px;
-    background-color: #fff;
-    border-left: 4px solid #CDA142;
-    border-radius: 0 4px 4px 0;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
-}
-
-.news-date {
-    font-size: 13px;
-    color: #CDA142;
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.news-content {
-    font-size: 14px;
-    color: #333;
-    line-height: 1.5;
-}
-
-.news-content .award-icon {
-    color: #CDA142;
-    margin-right: 4px;
-}
-
-.news-content .paper-title {
-    font-weight: 600;
-}
-
-.news-content .paper-authors {
-    font-size: 12px;
-    color: #666;
-    margin-top: 4px;
-}
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .timeline-date-compact {
@@ -218,7 +169,6 @@
           <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
           <li class="hidden"> <a href="#page-top"></a> </li>
           <li> <a class="page-scroll" href="#about">About</a> </li>
-          <li> <a class="page-scroll" href="#news">News</a> </li>
           <li> <a class="page-scroll" href="#achievements">Research</a> </li>
           <li> <a class="page-scroll" href="#resume">Academic/Career</a> </li>
           <li> <a class="page-scroll" href="#contact">Contact</a> </li>
@@ -259,34 +209,6 @@
       </div>
   </div>
 </div>
-
-<!-- News Section -->
-<div id="news" class="news-section">
-  <div class="container">
-    <div class="section-title text-center center">
-      <h2>News</h2>
-      <hr>
-    </div>
-    <div class="row">
-      <div class="col-md-8 col-md-offset-2">
-        <div class="news-list">
-
-          <div class="news-item">
-            <div class="news-date"><i class="fa fa-calendar"></i> &nbsp;March 2026</div>
-            <div class="news-content">
-              <span class="award-icon"><i class="fa fa-trophy"></i></span>
-              Our paper received <b>Special Committee Award</b> at <b>NLP2026</b>!<br>
-              <span class="paper-title">"Understanding Fact Recall in Language Models: Why Two-Stage Training Encourages Memorization but Mixed Training Teaches Knowledge"</span>
-              <div class="paper-authors">Zhang Ying (RIKEN), Heinzerling Benjamin (RIKEN/Tohoku University), Li Dongyuan (University of Tokyo), Inui Kentaro (RIKEN/MBZUAI)</div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Achievements Section -->
 <div id="achievements">
   <div class="container">
