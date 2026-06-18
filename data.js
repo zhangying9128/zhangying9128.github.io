@@ -1,6 +1,14 @@
 // Publications data
 const publications = [
     {
+        title: "Information extraction for materials science using large language models: A survey of recent advances and new frontiers",
+        authors: "Yutong Duan, Ying Zhang, Runjia Yu, Dongyuan Li, Satoshi Kosugi, Manabu Okumura, Kotaro Funakoshi",
+        venue: "Materials Today Communications (2026)",
+        links: [
+            { text: "paper", url: "https://www.sciencedirect.com/science/article/pii/S2352492826009402" }
+        ]
+    },
+    {
         title: "DyG-Mamba: Continuous State Space Modeling on Dynamic Graphs",
         authors: "Dongyuan Li, Shiyin Tan, Ying Zhang*, Ming Jin, Shirui Pan, Manabu Okumura, Renhe Jiang",
         venue: "The Thirty-Ninth Annual Conference on Neural Information Processing Systems (NeurIPS 2025)",
