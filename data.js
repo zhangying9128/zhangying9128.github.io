@@ -13,6 +13,7 @@ const publications = [
         authors: "Dongyuan Li, Shiyin Tan, Ying Zhang*, Ming Jin, Shirui Pan, Manabu Okumura, Renhe Jiang",
         venue: "The Thirty-Ninth Annual Conference on Neural Information Processing Systems (NeurIPS 2025)",
         links: [
+            { text: "paper", url: "https://neurips.cc/virtual/2025/loc/san-diego/poster/116449" }
         ]
     },
     {
