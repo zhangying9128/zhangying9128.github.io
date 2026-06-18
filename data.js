@@ -9,6 +9,14 @@ const publications = [
         ]
     },
     {
+        title: "Node Role-Guided LLMs for Dynamic Graph Clustering",
+        authors: "Dongyuan Li, Ying Zhang*, Yaozu Wu, Renhe Jiang",
+        venue: "International World Wide Web Conference 2025 (WWW 2026)",
+        links: [
+            { text: "paper", url: "https://dl.acm.org/doi/abs/10.1145/3774904.3792704" }
+        ]
+    },
+    {
         title: "DyG-Mamba: Continuous State Space Modeling on Dynamic Graphs",
         authors: "Dongyuan Li, Shiyin Tan, Ying Zhang*, Ming Jin, Shirui Pan, Manabu Okumura, Renhe Jiang",
         venue: "The Thirty-Ninth Annual Conference on Neural Information Processing Systems (NeurIPS 2025)",
