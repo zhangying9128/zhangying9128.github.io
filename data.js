@@ -2,7 +2,7 @@
 const publications = [
     {
         title: "Information extraction for materials science using large language models: A survey of recent advances and new frontiers",
-        authors: "Yutong Duan, Ying Zhang, Runjia Yu, Dongyuan Li, Satoshi Kosugi, Manabu Okumura, Kotaro Funakoshi",
+        authors: "Yutong Duan, Ying Zhang*, Runjia Yu, Dongyuan Li, Satoshi Kosugi, Manabu Okumura, Kotaro Funakoshi",
         venue: "Materials Today Communications (2026)",
         links: [
             { text: "paper", url: "https://www.sciencedirect.com/science/article/pii/S2352492826009402" }
