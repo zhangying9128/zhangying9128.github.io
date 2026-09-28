@@ -1,6 +1,22 @@
 // Publications data
 const publications = [
     {
+        title: "Reconsidering Degeneration of Token Embeddings with Definitions",
+        authors: "Ying Zhang*, Dongyuan Li, Hidetaka Kamigaito, Manabu Okumura",
+        venue: "Transactions on Machine Learning Research",
+        links: [
+            { text: "paper", url: "" }
+        ]
+    },
+    {
+        title: "Enhancing LLMs with Cognitive-Affective Personality Inference for Simulating Human Social-Psychological Behavior",
+        authors: "Zhibo Deng, Dongyuan Li, Shuwen Ge, Ziqing Zhang, Ying Zhang*, Renhe Jiang",
+        venue: "The Fortieth Annual Conference on Neural Information Processing Systems (NeurIPS 2026)",
+        links: [
+            { text: "paper", url: "" }
+        ]
+    },
+    {
         title: "Information extraction for materials science using large language models: A survey of recent advances and new frontiers",
         authors: "Yutong Duan, Ying Zhang*, Runjia Yu, Dongyuan Li, Satoshi Kosugi, Manabu Okumura, Kotaro Funakoshi",
         venue: "Materials Today Communications (2026)",
@@ -11,7 +27,7 @@ const publications = [
     {
         title: "Node Role-Guided LLMs for Dynamic Graph Clustering",
         authors: "Dongyuan Li, Ying Zhang*, Yaozu Wu, Renhe Jiang",
-        venue: "International World Wide Web Conference 2025 (WWW 2026)",
+        venue: "International World Wide Web Conference 2026 (WWW 2026)",
         links: [
             { text: "paper", url: "https://dl.acm.org/doi/abs/10.1145/3774904.3792704" }
         ]
@@ -64,7 +80,7 @@ const publications = [
     },
     {
         title: "Active Learning with Task Adaptation Pre-training for Speech Emotion Recognition",
-        authors: "Dongyuan Li, Ying Zhang*, Yusong Wang, Kataro Funakoshi, and Manabu Okumura",
+        authors: "Dongyuan Li, Ying Zhang*, Yusong Wang, Kotaro Funakoshi, and Manabu Okumura",
         venue: "Journal of Natural Language Processing (JNLP 2024)",
         links: [
             { text: "paper", url: "https://www.jstage.jst.go.jp/article/jnlp/31/3/31_825/_pdf/-char/ja" }
