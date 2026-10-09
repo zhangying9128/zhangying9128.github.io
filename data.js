@@ -3,7 +3,7 @@ const publications = [
     {
         title: "Reconsidering Degeneration of Token Embeddings with Definitions",
         authors: "Ying Zhang*, Dongyuan Li, Hidetaka Kamigaito, Manabu Okumura",
-        venue: "Transactions on Machine Learning Research",
+        venue: "Transactions on Machine Learning Research (TMLR 2026)",
         links: [
             { text: "paper", url: "" }
         ]
