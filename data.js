@@ -5,7 +5,8 @@ const publications = [
         authors: "Ying Zhang*, Dongyuan Li, Hidetaka Kamigaito, Manabu Okumura",
         venue: "Transactions on Machine Learning Research (TMLR 2026)",
         links: [
-            { text: "paper", url: "https://openreview.net/pdf?id=3liQS0NptI" }
+            { text: "paper", url: "https://openreview.net/pdf?id=3liQS0NptI" },
+            { text: "code", url: "https://github.com/zhangying9128/DefinitionEMB" }
         ]
     },
     {
