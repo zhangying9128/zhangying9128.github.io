@@ -18,6 +18,14 @@ const publications = [
         ]
     },
     {
+        title: "Channel Adapter for Time Series Foundation Models in Zero-Shot Multivariate Forecasting",
+        authors: "Dongyuan Li, Renhe Jiang, Shun Zheng, Zheng Dong, Haotian Gao, Ying Zhang*, Jiang Bian",
+        venue: "The Forty-third International Conference on Machine Learning (ICML 2026)",
+        links: [
+            { text: "paper", url: "" }
+        ]
+    },
+    {
         title: "Information extraction for materials science using large language models: A survey of recent advances and new frontiers",
         authors: "Yutong Duan, Ying Zhang*, Runjia Yu, Dongyuan Li, Satoshi Kosugi, Manabu Okumura, Kotaro Funakoshi",
         venue: "Materials Today Communications (2026)",
