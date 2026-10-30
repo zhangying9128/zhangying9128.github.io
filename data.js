@@ -20,7 +20,7 @@ const publications = [
     {
         title: "Channel Adapter for Time Series Foundation Models in Zero-Shot Multivariate Forecasting",
         authors: "Dongyuan Li, Renhe Jiang, Shun Zheng, Zheng Dong, Haotian Gao, Ying Zhang*, Jiang Bian",
-        venue: "The Forty-third International Conference on Machine Learning (ICML 2026)",
+        venue: "Forty-third International Conference on Machine Learning (ICML 2026)",
         links: [
             { text: "paper", url: "" }
         ]
