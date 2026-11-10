@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog | Ying Zhang</title>
+
+<link rel="shortcut icon" href="mypage/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="mypage/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="mypage/fonts/font-awesome/css/font-awesome.css">
+<link rel="stylesheet" type="text/css" href="mypage/css/style.css">
+<link rel="stylesheet" type="text/css" href="mypage/css/blog.css">
+</head>
+<body>
+
+<!-- Navigation：和 index.html 使用完全相同的结构和 class -->
+<div id="nav" class="affix">
+  <nav class="navbar navbar-custom">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse"> <i class="fa fa-bars" style="color:#D59F26;"></i> </button>
+        <a class="navbar-brand" href="index.html">Ying Zhang</a> </div>
+      <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+        <ul class="nav navbar-nav">
+          <li> <a href="index.html#about">About</a> </li>
+          <li> <a href="index.html#news">News</a> </li>
+          <li> <a href="index.html#achievements">Research</a> </li>
+          <li> <a href="index.html#resume">Academic/Career</a> </li>
+          <li> <a href="index.html#contact">Contact</a> </li>
+          <li class="active"> <a href="blog.html">Blog</a> </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div id="nav-spacer" style="height:60px;"></div>
+<script>
+// 导航栏固定在顶部，给下面的内容留出同样高度的空间
+(function () {
+  function fit() {
+    var n = document.getElementById('nav');
+    document.getElementById('nav-spacer').style.height = n.offsetHeight + 'px';
+  }
+  window.addEventListener('load', fit);
+  window.addEventListener('resize', fit);
+})();
+</script>
+
+<div class="blog-wrap">
+  <h2 class="page-title">Blog</h2>
+  <div id="post-list"></div>
+</div>
+
+<div id="footer">
+  <div class="container text-center">
+    <div class="fnav">
+      <p>Copyright &copy; 2026 Ying Zhang.</p>
+      <p>天行健 君子以自强不息</p>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="mypage/js/jquery.1.11.1.js"></script>
+<script type="text/javascript" src="mypage/js/bootstrap.js"></script>
+<script src="blog.js"></script>
+<script>
+// ===== 文章文件名列表（posts/ 下的 .js 文件名，不含 .js；顺序随意，会按日期排序）=====
+// 浏览器在 file:// 下无法读取文件夹内容，所以新文章需要在这里登记文件名
+const POSTS = [
+    "hello-world",
+];
+// ===== 列表结束 =====
+
+Blog.loadPosts(POSTS, function (posts) {
+    const list = document.getElementById('post-list');
+    posts.sort((a, b) => b.date.localeCompare(a.date));
+    if (posts.length === 0) {
+        list.innerHTML = '<p class="text-center">No posts yet.</p>';
+        return;
+    }
+    list.innerHTML = posts.map(p => `
+      <a class="post-card" href="post.html?id=${encodeURIComponent(p.id)}">
+        <div class="post-title">${Blog.esc(p.title)}</div>
+        ${Blog.metaHtml(p)}
+        <div class="post-summary">${Blog.esc(p.summary)}</div>
+      </a>`).join('');
+});
+</script>
+
+</body>
+</html>

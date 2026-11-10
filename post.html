@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blog | Ying Zhang</title>
+
+<link rel="shortcut icon" href="mypage/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" type="text/css" href="mypage/css/bootstrap.css">
+<link rel="stylesheet" type="text/css" href="mypage/fonts/font-awesome/css/font-awesome.css">
+<link rel="stylesheet" type="text/css" href="mypage/css/style.css">
+<link rel="stylesheet" type="text/css" href="mypage/css/blog.css">
+</head>
+<body>
+
+<!-- Navigation：和 index.html 使用完全相同的结构和 class -->
+<div id="nav" class="affix">
+  <nav class="navbar navbar-custom">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse"> <i class="fa fa-bars" style="color:#D59F26;"></i> </button>
+        <a class="navbar-brand" href="index.html">Ying Zhang</a> </div>
+      <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+        <ul class="nav navbar-nav">
+          <li> <a href="index.html#about">About</a> </li>
+          <li> <a href="index.html#news">News</a> </li>
+          <li> <a href="index.html#achievements">Research</a> </li>
+          <li> <a href="index.html#resume">Academic/Career</a> </li>
+          <li> <a href="index.html#contact">Contact</a> </li>
+          <li class="active"> <a href="blog.html">Blog</a> </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<div id="nav-spacer" style="height:60px;"></div>
+<script>
+// 导航栏固定在顶部，给下面的内容留出同样高度的空间
+(function () {
+  function fit() {
+    var n = document.getElementById('nav');
+    document.getElementById('nav-spacer').style.height = n.offsetHeight + 'px';
+  }
+  window.addEventListener('load', fit);
+  window.addEventListener('resize', fit);
+})();
+</script>
+
+<div class="blog-wrap">
+  <a class="back-link" href="blog.html"><i class="fa fa-arrow-left"></i> Back to Blog</a>
+  <div id="post"></div>
+</div>
+
+<div id="footer">
+  <div class="container text-center">
+    <div class="fnav">
+      <p>Copyright &copy; 2026 Ying Zhang.</p>
+      <p>天行健 君子以自强不息</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script type="text/javascript" src="mypage/js/jquery.1.11.1.js"></script>
+<script type="text/javascript" src="mypage/js/bootstrap.js"></script>
+<script src="blog.js"></script>
+<script>
+// 通用文章页：post.html?id=<文件名>，显示 posts/<文件名>.js
+(function () {
+    const box = document.getElementById('post');
+    const id = new URLSearchParams(location.search).get('id') || '';
+
+    if (!/^[A-Za-z0-9_-]+$/.test(id)) {
+        box.innerHTML = '<p>Post not found.</p>';
+        return;
+    }
+
+    Blog.loadPosts([id], function (posts) {
+        const post = posts[0];
+        if (!post) {
+            box.innerHTML = '<p>Post not found.</p>';
+            return;
+        }
+        document.title = post.title + ' | Ying Zhang';
+        box.innerHTML =
+            '<div class="post-header"><h1>' + Blog.esc(post.title) + '</h1>' + Blog.metaHtml(post) + '</div>' +
+            '<div class="post-body">' + Blog.renderMarkdown(post.markdown) + '</div>';
+    });
+})();
+</script>
+
+</body>
+</html>

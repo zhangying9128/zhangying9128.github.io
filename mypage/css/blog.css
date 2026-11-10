@@ -1,0 +1,63 @@
+/* Blog 列表页和文章页共用的样式 */
+body { background: #fff; }
+
+/* 导航栏的颜色完全沿用 style.css 里首页的样式（#nav / .navbar-custom），这里只负责固定在顶部 */
+#nav.affix {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.blog-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 16px 60px;
+    text-align: left;
+}
+.blog-wrap h2.page-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* 文章列表卡片：沿用首页 News 的金色左边框风格 */
+.post-card {
+    display: block;
+    margin-bottom: 18px;
+    padding: 16px 20px;
+    background: #f9f9f9;
+    border-left: 4px solid #CDA142;
+    border-radius: 0 4px 4px 0;
+    color: #333;
+    text-decoration: none;
+    transition: box-shadow 0.2s ease;
+}
+.post-card:hover, .post-card:focus {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    color: #333;
+    text-decoration: none;
+}
+.post-card .post-title { font-size: 18px; font-weight: 600; color: #2c3e50; margin-bottom: 4px; }
+.post-meta { font-size: 13px; color: #CDA142; font-weight: 600; margin-bottom: 6px; }
+.post-summary { font-size: 14px; color: #555; line-height: 1.5; }
+.post-tag {
+    display: inline-block;
+    padding: 1px 6px;
+    margin-left: 6px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 11px;
+    color: #666;
+    font-weight: normal;
+}
+
+/* 文章正文 */
+.post-header h1 { font-size: 28px; color: #2c3e50; margin-bottom: 8px; text-transform: none; }
+.post-body { font-size: 15px; line-height: 1.8; color: #333; margin-top: 24px; }
+.post-body h2, .post-body h3 { margin-top: 28px; color: #2c3e50; text-transform: none; }
+.post-body img { max-width: 100%; height: auto; }
+.post-body pre { background: #f5f5f5; border: 1px solid #e5e5e5; padding: 12px; overflow-x: auto; }
+.post-body blockquote { border-left: 4px solid #CDA142; color: #666; }
+.post-body a { text-decoration: underline; }
+.back-link { display: inline-block; margin-bottom: 20px; color: #CDA142; }
