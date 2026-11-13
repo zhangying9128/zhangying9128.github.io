@@ -1,6 +1,14 @@
 // Publications data
 const publications = [
     {
+        title: "Understanding Fact Recall in Language Models: Why Two-Stage Training Encourages Memorization but Mixed Training Teaches Knowledge",
+        authors: "Ying Zhang*, Benjamin Heinzerling, Dongyuan Li, Kentaro Inui",
+        venue: "The 20th Conference of the European Chapter of the Association for Computational Linguistics (EACL 2027)",
+        links: [
+            { text: "paper", url: "https://arxiv.org/abs/2505.16178" },
+        ]
+    },
+    {
         title: "Reconsidering Degeneration of Token Embeddings with Definitions",
         authors: "Ying Zhang*, Dongyuan Li, Hidetaka Kamigaito, Manabu Okumura",
         venue: "Transactions on Machine Learning Research (TMLR 2026)",
