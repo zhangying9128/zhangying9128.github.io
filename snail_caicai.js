@@ -1,6 +1,6 @@
 /*!
- * snail.js — 网页边缘的小蜗牛装饰
- * 用法：在页面 </body> 前加一行  <script src="snail.js"></script>
+ * Snail_caicai.js — 网页边缘的小蜗牛「菜菜」
+ * 用法：在页面 </body> 前加一行  <script src="Snail_caicai.js"></script>
  * 不依赖任何库，直接双击打开（file://）也能用。
  *
  * 自主行为：沿屏幕边缘爬行（留下会慢慢消失的黏液痕迹）、停下休息、
@@ -17,7 +17,17 @@
     var CONFIG = {
         size: 50,          // 蜗牛大小（px）。想放大或缩小就改这个数
         mobileSize: 50,    // 窄屏（宽度 < 600px）时的大小
-        speed: 2,         // 爬行速度（px/秒）
+        speed: 2,          // 爬行速度（px/秒）
+        drag: true,        // 是否可以用鼠标 / 手指把蜗牛拖到屏幕边缘的任意位置
+        remember: true,    // 换页面时记住蜗牛的状态（位置、朝向、在做什么），到下一个页面接着来
+        name: '菜菜',       // 蜗牛的名字
+        born: '2026-11-14T11:00:00+09:00',   // 出生时间（它从这一刻开始在网站上生活），所有访客看到的生活时长都从这里算起
+        hat: '',           // 默认戴的帽子（访客自己没换过时看到的）：'' 不戴 / 'straw' 草帽 / 'top' 礼帽 / 'crown' 皇冠 / 'bow' 蝴蝶结 / 'party' 派对帽 / 'sprout' 小芽
+        infoBar: 'nav',    // 信息条放在哪里：'nav' = 放进网站的导航栏里，作为最后一项；
+                           //   也可以固定在屏幕的一个角：'bottom-left' / 'bottom-right' / 'top-left' / 'top-right'；false = 不显示
+        navList: '.navbar-nav',   // infoBar 为 'nav' 时，往哪个列表里加这一项（选择器）。页面上找不到的话，会退回到左下角
+        topBar: 'auto',    // 屏幕顶部固定的导航条：'auto' = 自动识别，蜗牛的“顶边”会改成导航条的下沿；
+                           //   也可以写成选择器（比如 '#nav'）；false = 不管导航条，顶边就是屏幕最上面
         route: 'bottom-right',  // 爬行范围：屏幕的 1/4 —— 'bottom-right' 右下 / 'bottom-left' 左下 / 'top-right' 右上 / 'top-left' 左上
                                 //           （沿这个角的两条边来回爬）；'all' = 沿四条边绕圈；'bottom' = 只在底边来回爬
         trail: true,       // 是否留下黏液痕迹
@@ -94,7 +104,7 @@
         return {
             outline: d, suture: su, highlight: hl, pts: xs.map(function (x, j) { return [x, ys[j]]; }), yb: yb,
             front: Math.max.apply(null, xs), back: Math.min.apply(null, xs), top: Math.min.apply(null, ys),
-            cx: p.cx, a1: a1, a2: a2,
+            cx: p.cx, cy: p.cy, a1: a1, a2: a2,
             ax: (a1[0] + a2[0]) / 2, ay: (a1[1] + a2[1]) / 2,
             ar: Math.hypot(a1[0] - a2[0], a1[1] - a2[1]) / 2,
             aang: Math.atan2(a1[1] - a2[1], a1[0] - a2[0]) * 180 / Math.PI,
@@ -133,7 +143,8 @@
     var CSS = [
         '.snl-root{position:fixed;left:0;top:0;z-index:9990;pointer-events:none;will-change:transform}',
         '.snl-root svg{display:block;overflow:visible;pointer-events:none;-webkit-tap-highlight-color:transparent}',
-        '.snl-hit{pointer-events:visiblePainted;cursor:pointer}',
+        '.snl-hit{pointer-events:visiblePainted;cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none}',
+        '.snl-dragging .snl-hit{cursor:grabbing}',
         '.snl-trail{position:fixed;left:0;top:0;z-index:9988;pointer-events:none}',
         '.snl-say{position:fixed;z-index:9993;pointer-events:none;font:700 13px/1.25 "Hiragino Maru Gothic ProN","Yu Gothic UI","PingFang SC","Microsoft YaHei",sans-serif;' +
             'color:#2f2219;background:#fffaf0;border:2px solid #2f2219;border-radius:14px;padding:3px 10px;white-space:nowrap;' +
@@ -154,6 +165,43 @@
         '.snl-z{font-family:"Courier New",ui-monospace,monospace;-webkit-text-stroke:0;color:#5f76a8}',
         '.snl-foam{border-radius:0;background:#e6f1fb;border:2px solid #231a14}'
     ].join('\n');
+    // 信息条和信息面板的样式
+    var FONT_UI = '"Hiragino Maru Gothic ProN","PingFang SC","Microsoft YaHei","Yu Gothic UI","Noto Sans CJK SC",sans-serif';
+    var CSS_INFO = [
+        '.snl-bar,.snl-panel,.snl-panel *{box-sizing:border-box}',
+        '.snl-bar{position:fixed;z-index:9994;display:flex;align-items:center;gap:7px;height:28px;margin:0;padding:0 10px;background:#fffaf0;color:#231a14;' +
+            'border:2px solid #231a14;border-radius:0;box-shadow:3px 3px 0 #231a14;font:700 13px/1 ' + FONT_UI + ';cursor:pointer;white-space:nowrap;' +
+            '-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}',
+        '.snl-bar:hover,.snl-bar.snl-open{background:#f6e3b0}',
+        '.snl-navlink{cursor:pointer;white-space:nowrap;-webkit-user-select:none;user-select:none}',
+        '.snl-navlink .snl-dot{margin-right:6px;vertical-align:-1px}',
+        '.snl-dot{display:inline-block;width:10px;height:10px;background:#86a86c;border:2px solid #231a14}',
+        '.snl-panel{position:fixed;z-index:9994;display:none;width:252px;max-width:calc(100vw - 24px);background:#fffaf0;color:#231a14;text-align:left;' +
+            'border:2px solid #231a14;box-shadow:4px 4px 0 #231a14;font:13px/1.55 ' + FONT_UI + '}',
+        '.snl-panel.snl-open{display:block}',
+        '.snl-tabs{display:flex;background:#efe6d4;border-bottom:2px solid #231a14}',
+        '.snl-tab,.snl-close{-webkit-appearance:none;appearance:none;margin:0;border:0;border-radius:0;background:transparent;color:inherit;font:inherit;cursor:pointer;outline-offset:-3px}',
+        '.snl-tab{padding:5px 13px;border-right:2px solid #231a14}',
+        '.snl-tab.snl-on{background:#fffaf0;font-weight:700;margin-bottom:-2px;padding-bottom:7px}',
+        '.snl-close{margin-left:auto;padding:0 10px;font:700 17px/1 sans-serif;color:#8a7762}',
+        '.snl-page{display:none;padding:12px}',
+        '.snl-page.snl-on{display:block}',
+        '.snl-polaroid{width:204px;margin:0 auto 10px;padding:6px 6px 4px;background:#fff;border:2px solid #231a14;box-shadow:3px 3px 0 #d9ccb4;transform:rotate(-1.5deg)}',
+        '.snl-photo{display:block;width:192px;height:144px;image-rendering:crisp-edges;image-rendering:pixelated}',
+        '.snl-cap{margin-top:3px;text-align:center;font-size:12px;color:#8a7762}',
+        '.snl-name{font-size:17px;font-weight:700;line-height:1.3}',
+        '.snl-dim{color:#8a7762}',
+        '.snl-age{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}',
+        '.snl-small{font-size:11px;line-height:1.4;margin-top:4px}',
+        '.snl-hats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}',
+        '.snl-hat{-webkit-appearance:none;appearance:none;margin:0;padding:6px 2px 4px;border:2px solid #cdbfa8;border-radius:0;background:#fff;color:inherit;font:12px/1.3 ' + FONT_UI + ';cursor:pointer;' +
+            'display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;min-height:58px}',
+        '.snl-hat canvas{image-rendering:crisp-edges;image-rendering:pixelated}',
+        '.snl-hat:hover{border-color:#8a7762}',
+        '.snl-hat.snl-on{border-color:#231a14;background:#f6e3b0;box-shadow:2px 2px 0 #231a14;font-weight:700}',
+        '.snl-none{font-size:18px;line-height:27px;color:#b3a48f}',
+        '@media print{.snl-bar,.snl-panel{display:none!important}}'
+    ].join('\n');
     var PX = CONFIG.pixel ? 2 : 0;                         // 每个“像素格”在屏幕上的大小（px），在 layout() 里按 size 计算；0 = 不用像素风
     var PIX_UNIT = 2.174;                                  // 一个像素格对应多少蜗牛单位（头的直径 ≈ 12 格）
 
@@ -162,7 +210,7 @@
 
     function build() {
         var style = document.createElement('style');
-        style.textContent = CSS + (PX ? '\n' + CSS_PIXEL : '');
+        style.textContent = CSS + (PX ? '\n' + CSS_PIXEL : '') + '\n' + CSS_INFO;
         document.head.appendChild(style);
 
         if (CONFIG.trail) {
@@ -333,9 +381,14 @@
         P.eyeL = el('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, P.face);
         P.eyeR = el('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, P.face);
         P.mouth = el('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, P.face);
+        P.hat = el('g', { 'shape-rendering': 'crispEdges' }, art);     // 帽子（手绘风时用；像素风时帽子直接画在像素格上）
         P.INK = INK;
 
         svg.addEventListener('click', onClick);
+        svg.addEventListener('pointerdown', onDown);
+        window.addEventListener('pointermove', onMove, { passive: false });
+        window.addEventListener('pointerup', onUp);
+        window.addEventListener('pointercancel', onUp);
     }
 
     // 身体轮廓：
@@ -433,11 +486,14 @@
     }
 
     // ---------- 沿屏幕边缘的路线 ----------
-    var W = 0, H = 0, segs = [], LEN = 0, loop = true, pos = 0;
+    var W = 0, H = 0, segs = [], LEN = 0, pos = 0;
+    // 活动范围：整圈路线上的一段 [rangeLo, rangeHi]（bounded = false 表示整圈都能爬）。
+    // 被拖到别处后，这段范围会跟着蜗牛一起搬过去（dragged = true）
+    var bounded = false, rangeLo = 0, rangeHi = 0, rangeM = 0, dragged = false;
+    var drag = null, landing = null, suppressClick = 0;
     var pose = { x: 0, y: 0, a: 0 };
 
     function layout() {
-        var oldLen = LEN;
         W = document.documentElement.clientWidth || window.innerWidth;
         H = window.innerHeight;
         // 像素风：蜗牛的像素图分辨率固定（每格 PIX_UNIT 个单位），和窗口宽度无关 → 任何屏幕上都是同一张像素图
@@ -451,44 +507,7 @@
         svg.setAttribute('height', VBH * k);
         root.style.transformOrigin = (AX * k) + 'px ' + (BASE * k) + 'px';
 
-        var route = CONFIG.route, r = Math.min(30, W / 4, H / 4), mx = W / 2, my = H / 2;
-        loop = route === 'all';
-        segs = [];
-        if (loop) {
-            segs.push({ line: 1, x0: r, y0: H, x1: W - r, y1: H, a: 0 });          // 底边，向右
-            segs.push({ cx: W - r, cy: H - r, r: r, t0: 90, t1: 0 });
-            segs.push({ line: 1, x0: W, y0: H - r, x1: W, y1: r, a: -90 });        // 右边，向上
-            segs.push({ cx: W - r, cy: r, r: r, t0: 0, t1: -90 });
-            segs.push({ line: 1, x0: W - r, y0: 0, x1: r, y1: 0, a: -180 });       // 上边，向左（倒挂）
-            segs.push({ cx: r, cy: r, r: r, t0: -90, t1: -180 });
-            segs.push({ line: 1, x0: 0, y0: r, x1: 0, y1: H - r, a: -270 });       // 左边，向下
-            segs.push({ cx: r, cy: H - r, r: r, t0: -180, t1: -270 });
-        } else if (route === 'bottom') {
-            segs.push({ line: 1, x0: 0, y0: H, x1: W, y1: H, a: 0 });
-        } else if (route === 'bottom-left') {     // 左下 1/4：左边的下半段 + 底边的左半段
-            segs.push({ line: 1, x0: 0, y0: my, x1: 0, y1: H - r, a: -270 });
-            segs.push({ cx: r, cy: H - r, r: r, t0: -180, t1: -270 });
-            segs.push({ line: 1, x0: r, y0: H, x1: mx, y1: H, a: -360 });
-        } else if (route === 'top-right') {       // 右上 1/4：右边的上半段 + 顶边的右半段
-            segs.push({ line: 1, x0: W, y0: my, x1: W, y1: r, a: -90 });
-            segs.push({ cx: W - r, cy: r, r: r, t0: 0, t1: -90 });
-            segs.push({ line: 1, x0: W - r, y0: 0, x1: mx, y1: 0, a: -180 });
-        } else if (route === 'top-left') {        // 左上 1/4：顶边的左半段 + 左边的上半段
-            segs.push({ line: 1, x0: mx, y0: 0, x1: r, y1: 0, a: -180 });
-            segs.push({ cx: r, cy: r, r: r, t0: -90, t1: -180 });
-            segs.push({ line: 1, x0: 0, y0: r, x1: 0, y1: my, a: -270 });
-        } else {                                  // 右下 1/4（默认）：底边的右半段 + 右边的下半段
-            segs.push({ line: 1, x0: mx, y0: H, x1: W - r, y1: H, a: 0 });
-            segs.push({ cx: W - r, cy: H - r, r: r, t0: 90, t1: 0 });
-            segs.push({ line: 1, x0: W, y0: H - r, x1: W, y1: my, a: -90 });
-        }
-        LEN = 0;
-        segs.forEach(function (s) {
-            s.len = s.line ? Math.hypot(s.x1 - s.x0, s.y1 - s.y0) : s.r * Math.PI / 2;
-            s.start = LEN;
-            LEN += s.len;
-        });
-        pos = oldLen ? pos / oldLen * LEN : (loop ? W * rand(0.12, 0.3) : LEN * rand(0.2, 0.45));
+        buildPath();
 
         if (canvas && PX) {
             canvas.width = Math.ceil(W / PX);
@@ -514,8 +533,348 @@
         trailDirty = true;
     }
 
+    // 把这一圈上的位置换算成“第几圈、第几段、这一段的百分之多少”，这样路线变了（窗口大小、导航条、换页面）
+    // 之后还能找回同一个地方
+    function segF(p) {
+        if (!LEN) return null;
+        var n = Math.floor(p / LEN), q = p - n * LEN;
+        for (var i = 0; i < segs.length; i++) {
+            var s = segs[i];
+            if (q <= s.start + s.len || i === segs.length - 1) return { n: n, i: i, f: clamp((q - s.start) / s.len, 0, 1) };
+        }
+        return null;
+    }
+    function fromSegF(o) {
+        var s = segs[o.i];
+        return o.n * LEN + s.start + clamp(o.f, 0, 1) * s.len;
+    }
+
+    // 路线永远是沿屏幕四条边的一整圈（转角是圆弧），活动范围只是这一圈上的一段。
+    // 顶边的位置是 topInset：没有固定导航条时是 0（屏幕最上面），有的话是导航条的下沿
+    function buildPath() {
+        var keep = LEN ? { pos: segF(pos), lo: segF(rangeLo), hi: segF(rangeHi) } : null;
+        var top = topInset, route = CONFIG.route;
+        var r = Math.min(30, W / 4, (H - top) / 4), mx = W / 2, my = (top + H) / 2;
+        segs = [];
+        segs.push({ line: 1, x0: r, y0: H, x1: W - r, y1: H, a: 0 });                  // 底边，向右
+        segs.push({ cx: W - r, cy: H - r, r: r, t0: 90, t1: 0 });
+        segs.push({ line: 1, x0: W, y0: H - r, x1: W, y1: top + r, a: -90 });          // 右边，向上
+        segs.push({ cx: W - r, cy: top + r, r: r, t0: 0, t1: -90 });
+        segs.push({ line: 1, x0: W - r, y0: top, x1: r, y1: top, a: -180 });           // 顶边，向左（倒挂）
+        segs.push({ cx: r, cy: top + r, r: r, t0: -90, t1: -180 });
+        segs.push({ line: 1, x0: 0, y0: top + r, x1: 0, y1: H - r, a: -270 });         // 左边，向下
+        segs.push({ cx: r, cy: H - r, r: r, t0: -180, t1: -270 });
+        LEN = 0;
+        segs.forEach(function (s) {
+            s.len = s.line ? Math.hypot(s.x1 - s.x0, s.y1 - s.y0) : s.r * Math.PI / 2;
+            s.start = LEN;
+            LEN += s.len;
+        });
+        // 四条边各自的中点在这一圈上的位置
+        var midB = segs[0].start + (mx - r), midR = segs[2].start + (H - r - my);
+        var midT = segs[4].start + (W - r - mx), midL = segs[6].start + (my - top - r);
+        var RANGES = {
+            'bottom-right': [midB, midR], 'top-right': [midR, midT], 'top-left': [midT, midL], 'bottom-left': [midL, LEN + midB],
+            'bottom': [0, segs[0].len]
+        };
+        bounded = route !== 'all';
+        var rg = RANGES[route] || RANGES['bottom-right'];
+        rangeM = route === 'bottom' ? Math.max(0, 50 * k - r) : 50 * k;                // 两头留出半只蜗牛的位置
+        if (keep) pos = fromSegF(keep.pos);
+        if (!bounded) {
+            if (!keep) pos = W * rand(0.12, 0.3);
+        } else if (dragged && keep) {
+            rangeLo = fromSegF(keep.lo); rangeHi = fromSegF(keep.hi);                  // 被拖走后的活动范围原样保留
+        } else {
+            rangeLo = rg[0]; rangeHi = rg[1];
+            pos = keep ? clamp(pos, rangeLo + rangeM, rangeHi - rangeM) : lerp(rangeLo, rangeHi, rand(0.3, 0.6));
+        }
+    }
+
+    // ---------- 顶部的导航条 ----------
+    var topInset = 0, topTarget = 0, topCheck = 0;
+    function isTopBar(n) {
+        var cs = window.getComputedStyle(n);
+        if (cs.position !== 'fixed' && cs.position !== 'sticky') return 0;
+        if (cs.display === 'none' || cs.visibility === 'hidden') return 0;
+        var rc = n.getBoundingClientRect();
+        // 贴着屏幕顶、横跨大半个屏幕、又不太高的固定元素，才算导航条
+        return (rc.top <= 2 && rc.bottom > 4 && rc.bottom < H * 0.4 && rc.width > W * 0.5) ? rc.bottom : 0;
+    }
+    function detectTopBar() {
+        var opt = CONFIG.topBar, best = 0, i, n;
+        if (!opt) return 0;
+        if (opt !== 'auto') {
+            var list = document.querySelectorAll(opt);
+            for (i = 0; i < list.length; i++) best = Math.max(best, isTopBar(list[i]));
+            return Math.round(best);
+        }
+        if (!document.elementsFromPoint) return 0;
+        var xs = [0.2, 0.5, 0.8];
+        for (var xi = 0; xi < xs.length; xi++) {
+            var els = document.elementsFromPoint(W * xs[xi], 2);
+            for (i = 0; i < els.length && i < 8; i++) {
+                for (n = els[i]; n && n !== document.body && n !== document.documentElement; n = n.parentElement) {
+                    if (typeof n.className === 'string' && /(^|\s)snl-(root|bar|panel|pix|trail|say|z|foam|poop)(\s|$)/.test(n.className)) break;     // 蜗牛自己的东西
+                    var bt = isTopBar(n);
+                    if (bt) { best = Math.max(best, bt); break; }
+                }
+            }
+        }
+        return Math.round(best);
+    }
+    // 每帧调用：导航条出现 / 消失 / 变高时，顶边平滑地移过去，趴在顶边的蜗牛也跟着移动
+    function updateTopBar(dt, now) {
+        if (now - topCheck > 250) {
+            topCheck = now;
+            var seen = detectTopBar();
+            if (seen !== topTarget) { topTarget = seen; placeInfo(); }
+        }
+        if (topInset === topTarget) return;
+        var next = topInset + (topTarget - topInset) * (1 - Math.exp(-12 * dt));
+        topInset = Math.abs(topTarget - next) < 0.5 ? topTarget : next;
+        buildPath();
+    }
+
+    // ---------- 每位访客自己的数据（存在他自己的浏览器里）：只有他给蜗牛选的帽子 ----------
+    var ME_KEY = 'cuteSnail:me';
+    var me = { hat: undefined };
+    function loadMe(extra) {
+        var d = null;
+        try { d = JSON.parse(window.localStorage.getItem(ME_KEY)); } catch (e) {}
+        if (extra && typeof extra === 'object' && (!d || !d.t || (extra.t || 0) > d.t)) d = extra;   // 本地文件打开时，从上一个页面带过来的那份
+        if (d && typeof d === 'object') me = { hat: d.hat, t: d.t };      // 只取帽子（旧版本存过的互动次数和日记不再使用）
+    }
+    function saveMe() {
+        me.t = Date.now();
+        try { window.localStorage.setItem(ME_KEY, JSON.stringify(me)); } catch (e) {}
+    }
+    function setHat(id) {
+        id = HATS[id] ? id : '';
+        if (id === currentHat()) return;
+        me.hat = id;
+        saveMe();
+        rebuildHatSvg();
+        refreshPanel(true);
+    }
+
+    // ---------- 角落的信息条 + 信息面板（档案 / 衣柜） ----------
+    var bar = null, panel = null, UI = {}, curTab = 'info', inNav = false;
+    var BORN = new Date(CONFIG.born).getTime();
+    if (isNaN(BORN)) BORN = Date.now();
+    function pad2(n) { return (n < 10 ? '0' : '') + n; }
+    function lived() { return Math.max(0, Date.now() - BORN); }
+    function fmtAge(ms) {
+        var sec = Math.floor(ms / 1000), d = Math.floor(sec / 86400), h = Math.floor(sec % 86400 / 3600), m = Math.floor(sec % 3600 / 60);
+        return (d ? d + ' 天 ' : '') + (d || h ? h + ' 小时 ' : '') + m + ' 分 ' + pad2(sec % 60) + ' 秒';
+    }
+    function fmtDate(t, withTime) {
+        var d = new Date(t), str = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+        return withTime ? pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) + ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) : str;
+    }
+    function nowDoing() {
+        if (busy) return ({ eat: '在吃叶子', poop: '在拉便便', chirp: '在叫', startle: '吓得躲进了壳里', foam: '生气了，躲在壳里吐泡泡',
+            wake: '刚睡醒', held: '被你拿起来了', landed: '躲在壳里观察情况' })[busy.name] || '在发呆';
+        return ({ crawl: '在爬', rest: '在休息', explore: '在东张西望', sleep: '在睡觉', turn: '在掉头', curious: '在看你的鼠标' })[state.name] || '在发呆';
+    }
+    function mk(tag, cls, text, parent) {
+        var n = document.createElement(tag);
+        if (cls) n.className = cls;
+        if (text !== undefined && text !== null) n.textContent = text;
+        if (parent) parent.appendChild(n);
+        return n;
+    }
+    function buildInfo() {
+        if (!CONFIG.infoBar) return;
+        var list = CONFIG.infoBar === 'nav' ? document.querySelector(CONFIG.navList) : null;
+        inNav = !!list;
+        if (inNav) {
+            // 放进导航栏：做成和其他导航项一样的 <li><a>，样式跟着导航栏走
+            var li = mk(/^(ul|ol)$/i.test(list.tagName) ? 'li' : 'span', 'snl-navitem', null, list);
+            bar = mk('a', 'snl-navlink', null, li);
+            bar.setAttribute('role', 'button');
+            bar.setAttribute('tabindex', '0');
+            bar.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); bar.click(); } });
+        } else {
+            bar = mk('button', 'snl-bar', null, document.body);
+            bar.type = 'button';
+        }
+        bar.setAttribute('aria-expanded', 'false');
+        mk('span', 'snl-dot', null, bar);
+        UI.barText = mk('span', '', '', bar);
+        bar.addEventListener('click', function (e) { e.preventDefault(); if (panel.classList.contains('snl-open')) closePanel(); else openPanel(); });
+
+        panel = mk('div', 'snl-panel', null, document.body);
+        panel.setAttribute('role', 'dialog');
+        panel.setAttribute('aria-label', CONFIG.name + '的信息');
+        var tabs = mk('div', 'snl-tabs', null, panel);
+        UI.tabs = {}; UI.pages = {};
+        [['info', '档案'], ['hats', '衣柜']].forEach(function (t) {
+            var b = UI.tabs[t[0]] = mk('button', 'snl-tab', t[1], tabs);
+            b.type = 'button';
+            b.addEventListener('click', function () { showTab(t[0]); });
+        });
+        var x = mk('button', 'snl-close', '×', tabs);
+        x.type = 'button'; x.setAttribute('aria-label', '关闭');
+        x.addEventListener('click', closePanel);
+
+        // 档案：照片 + 名字 + 生活了多久 + 现在在做什么
+        var pg = UI.pages.info = mk('div', 'snl-page', null, panel);
+        var pol = mk('div', 'snl-polaroid', null, pg);
+        UI.photo = mk('canvas', 'snl-photo', null, pol);
+        UI.photo.width = 48; UI.photo.height = 36;
+        UI.cap = mk('div', 'snl-cap', '', pol);
+        mk('div', 'snl-name', CONFIG.name, pg);
+        mk('div', 'snl-dim', '本站居民 · 蜗牛 · 生日 ' + fmtDate(BORN), pg);
+        mk('div', 'snl-dim', '已经在这里生活了', pg).style.marginTop = '6px';
+        UI.age = mk('div', 'snl-age', '', pg);
+        var nowRow = mk('div', '', null, pg);
+        mk('span', 'snl-dim', '现在：', nowRow);
+        UI.now = mk('span', '', '', nowRow);
+
+        // 衣柜
+        pg = UI.pages.hats = mk('div', 'snl-page', null, panel);
+        UI.hats = mk('div', 'snl-hats', null, pg);
+        //mk('div', 'snl-dim snl-small', '帽子只存在你自己的浏览器里，别人看到的还是它原来的样子。', pg).style.marginTop = '10px';
+
+        document.addEventListener('pointerdown', function (e) {       // 点面板外面就收起来
+            if (panel.classList.contains('snl-open') && !panel.contains(e.target) && !bar.contains(e.target)) closePanel();
+        });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePanel(); });
+        window.setInterval(tickInfo, 1000);
+        placeInfo();
+        tickInfo();
+    }
+    function placeInfo() {
+        if (!bar) return;
+        var gap = 12;
+        if (inNav) {
+            // 在导航栏里：面板从这一项的正下方垂下来，右边缘对齐这一项（放不下就贴着屏幕边）
+            var rc = bar.getBoundingClientRect();
+            if (!rc.width && !rc.height) { closePanel(); return; }        // 这一项被收起来了（比如手机上折叠的菜单）
+            var top = Math.max(gap, rc.bottom + 8), pw = Math.min(252, W - 2 * gap);
+            panel.style.top = top + 'px';
+            panel.style.bottom = 'auto';
+            panel.style.right = 'auto';
+            panel.style.left = clamp(rc.right - pw, gap, Math.max(gap, W - pw - gap)) + 'px';
+            panel.style.maxHeight = 'calc(100vh - ' + (top + gap) + 'px)';
+            panel.style.overflowY = 'auto';
+            return;
+        }
+        // 固定在屏幕的一个角上；顶部有导航条时让开它
+        var where = String(CONFIG.infoBar), topSide = where.indexOf('top') === 0, right = where.indexOf('right') > 0;
+        var v = topSide ? Math.round(topTarget) + gap : gap;
+        [bar, panel].forEach(function (n, i) {
+            n.style.left = right ? 'auto' : gap + 'px';
+            n.style.right = right ? gap + 'px' : 'auto';
+            n.style.top = topSide ? (v + (i ? 36 : 0)) + 'px' : 'auto';
+            n.style.bottom = topSide ? 'auto' : (v + (i ? 36 : 0)) + 'px';
+        });
+        panel.style.maxHeight = 'calc(100vh - ' + (v + 48) + 'px)';
+        panel.style.overflowY = 'auto';
+    }
+    function tickInfo() {
+        if (!bar) return;
+        var ms = lived(), day = Math.floor(ms / 86400000) + 1;
+        UI.barText.textContent = inNav ? CONFIG.name : CONFIG.name + ' · 第 ' + day + ' 天';     // 导航栏里只显示名字
+        if (!panel.classList.contains('snl-open')) return;
+        if (inNav) placeInfo();
+        if (!panel.classList.contains('snl-open')) return;
+        UI.age.textContent = fmtAge(ms);
+        UI.now.textContent = state ? nowDoing() : '';
+    }
+    function showTab(name) {
+        curTab = name;
+        for (var key in UI.tabs) {
+            UI.tabs[key].classList.toggle('snl-on', key === name);
+            UI.pages[key].classList.toggle('snl-on', key === name);
+        }
+        refreshPanel(true);
+    }
+    function openPanel() {
+        if (!panel) return;
+        placeInfo();
+        panel.classList.add('snl-open'); bar.classList.add('snl-open');
+        bar.setAttribute('aria-expanded', 'true');
+        showTab(curTab);
+        tickInfo();
+    }
+    function closePanel() {
+        if (!panel) return;
+        panel.classList.remove('snl-open'); bar.classList.remove('snl-open');
+        bar.setAttribute('aria-expanded', 'false');
+    }
+    // 面板开着的时候，把当前这一页的内容刷新一下（photo = 是否重新拍照）
+    function refreshPanel(photo) {
+        if (!panel || !panel.classList.contains('snl-open')) return;
+        if (curTab === 'info') {
+            if (photo && SH) takePhoto(UI.photo);
+            UI.cap.textContent = CONFIG.name + ' · 第 ' + (Math.floor(lived() / 86400000) + 1) + ' 天';
+        } else {
+            UI.hats.textContent = '';
+            var cur = currentHat();
+            [''].concat(Object.keys(HATS)).forEach(function (id) {
+                var b = mk('button', 'snl-hat' + (id === cur ? ' snl-on' : ''), null, UI.hats);
+                b.type = 'button';
+                b.setAttribute('aria-pressed', id === cur ? 'true' : 'false');
+                if (id) b.appendChild(hatCanvas(id, 4)); else mk('span', 'snl-none', '—', b);
+                mk('span', '', id ? HATS[id].name : '不戴', b);
+                b.addEventListener('click', function () { setHat(id); });
+            });
+        }
+    }
+
+    // ---------- 换页面时记住状态 ----------
+    var SAVE_KEY = 'cuteSnail:', lastSave = 0, forgot = false;
+    function saveState() {
+        if (!CONFIG.remember || forgot || !LEN || !state) return;
+        var held = busy && /^(held|landed|startle|foam)$/.test(busy.name);
+        var data = {
+            v: 1, t: Date.now(),
+            pos: segF(pos), lo: segF(rangeLo), hi: segF(rangeHi), dragged: dragged,
+            flip: S.flip >= 0 ? 1 : -1,
+            out: held ? 0 : S.out, ext: S.ext, lift: S.lift, tl: S.tl, low: S.low, epi: S.epi,
+            state: (busy || state.name === 'turn' || state.name === 'curious') ? 'rest' : state.name,
+            st: busy ? 0 : state.t, sd: busy ? 1.5 : state.dur,
+            food: lastFood, poop: poopTimer, me: me
+        };
+        var str = JSON.stringify(data);
+        try { window.sessionStorage.setItem(SAVE_KEY, str); } catch (e) {}
+        // 直接双击打开本地文件（file://）时，有的浏览器不让两个页面共用存储，所以再用 window.name 带一份过去
+        try { if (!window.name || window.name.indexOf(SAVE_KEY) === 0) window.name = SAVE_KEY + str; } catch (e) {}
+    }
+    function loadState() {
+        if (!CONFIG.remember) return null;
+        var best = null;
+        function tryParse(str) {
+            try {
+                var d = JSON.parse(str);
+                if (d && d.v === 1 && d.pos && typeof d.pos.i === 'number' && (!best || d.t > best.t)) best = d;
+            } catch (e) {}
+        }
+        try { var a = window.sessionStorage.getItem(SAVE_KEY); if (a) tryParse(a); } catch (e) {}
+        try { if (window.name && window.name.indexOf(SAVE_KEY) === 0) tryParse(window.name.slice(SAVE_KEY.length)); } catch (e) {}
+        return best;
+    }
+    function restoreState(d) {
+        dragged = !!d.dragged;
+        if (segs[d.pos.i]) pos = fromSegF(d.pos);
+        if (bounded) {
+            if (dragged && d.lo && d.hi && segs[d.lo.i] && segs[d.hi.i]) { rangeLo = fromSegF(d.lo); rangeHi = fromSegF(d.hi); }
+            pos = clamp(pos, rangeLo + rangeM, rangeHi - rangeM);
+        }
+        S.flip = d.flip < 0 ? -1 : 1;
+        S.out = +d.out || 0; S.ext = +d.ext || 0.5; S.lift = +d.lift || 0; S.low = +d.low || 0; S.epi = +d.epi || 0;
+        if (d.tl && d.tl.length === 2) S.tl = [+d.tl[0] || 0, +d.tl[1] || 0];
+        setState(DUR[d.state] ? d.state : 'rest');
+        state.t = +d.st || 0;
+        state.dur = +d.sd || state.dur;
+        lastFood = d.food || null;
+        poopTimer = typeof d.poop === 'number' ? d.poop : -1;
+    }
+
     function pointAt(p) {
-        if (loop) p = ((p % LEN) + LEN) % LEN;
+        p = ((p % LEN) + LEN) % LEN;
         for (var i = 0; i < segs.length; i++) {
             var s = segs[i];
             if (p <= s.start + s.len || i === segs.length - 1) {
@@ -527,6 +886,28 @@
         }
         return { x: 0, y: H, a: 0 };
     }
+
+    // 屏幕上任意一点 → 这一圈路线上离它最近的位置
+    function nearestOnLoop(x, y) {
+        var best = 0, bd = 1e18;
+        for (var i = 0; i < segs.length; i++) {
+            var s = segs[i], f, px, py;
+            if (s.line) {
+                var dx = s.x1 - s.x0, dy = s.y1 - s.y0;
+                f = clamp(((x - s.x0) * dx + (y - s.y0) * dy) / (dx * dx + dy * dy || 1), 0, 1);
+                px = s.x0 + dx * f; py = s.y0 + dy * f;
+            } else {
+                var mid = (s.t0 + s.t1) / 2, ang = Math.atan2(y - s.cy, x - s.cx) / D2R;
+                ang = clamp(mid + ((((ang - mid) % 360) + 540) % 360 - 180), s.t1, s.t0);
+                f = (s.t0 - ang) / (s.t0 - s.t1);
+                px = s.cx + s.r * Math.cos(ang * D2R); py = s.cy + s.r * Math.sin(ang * D2R);
+            }
+            var d = (x - px) * (x - px) + (y - py) * (y - py);
+            if (d < bd) { bd = d; best = s.start + f * s.len; }
+        }
+        return best;
+    }
+    function angDiff(to, from) { return (((to - from) % 360) + 540) % 360 - 180; }
 
     function flipShown() {
         var f = S.flip;
@@ -658,6 +1039,17 @@
             if (bt < 2.4) wob = Math.max(wob, 3);
         } else if (b.name === 'wake') {
             t.epi = 0; t.ext = 0.5;
+        } else if (b.name === 'held') {
+            // 被拿起来：先愣一下，然后缩进壳里（真的蜗牛被拿起来也会缩壳）
+            if (bt < 0.22) t.ext = 0.7; else { t.out = 0; t.tl0 = t.tl1 = 0; t.low = 0; }
+            wob = Math.max(wob, 1.2);
+        } else if (b.name === 'landed') {
+            // 放下之后：在壳里躲一会儿，再慢慢探出头来看看这是哪儿
+            if (bt < 0.9) { t.out = 0; t.tl0 = t.tl1 = 0; t.low = 0; }
+            else {
+                t.ext = 0.7;
+                if (!b.said && bt > 2.2) { b.said = 1; say(pick(['?', '…?', 'ここどこ?', '咦?', 'ん?'])); }
+            }
         }
         if (bt >= b.dur) {
             busy = null;
@@ -683,10 +1075,51 @@
         P.leaf.style.opacity = 1;
     }
 
+    // ---------- 拖动 ----------
+    function onDown(e) {
+        if (!CONFIG.drag || (e.button !== undefined && e.button !== 0) || drag) return;
+        drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, x: e.clientX, y: e.clientY, moved: false, target: e.target };
+        try { e.target.setPointerCapture(e.pointerId); } catch (err) {}
+        e.preventDefault();
+    }
+    function onMove(e) {
+        if (!drag || e.pointerId !== drag.id) return;
+        drag.x = e.clientX; drag.y = e.clientY;
+        if (!drag.moved && Math.hypot(drag.x - drag.sx, drag.y - drag.sy) > 6) {     // 移动超过 6px 才算拖动，否则还是点击
+            drag.moved = true;
+            landing = null;
+            drag.ox = pose.x - drag.x; drag.oy = pose.y - drag.y;
+            busy = { name: 'held', t: 0, dur: Infinity };
+            wob = 6;
+            root.classList.add('snl-dragging');
+            if (Math.random() < 0.6) say(pick(['!?', 'わっ', '哇', '!']));
+        }
+        if (drag.moved) e.preventDefault();
+    }
+    function onUp(e) {
+        if (!drag || e.pointerId !== drag.id) return;
+        var d = drag;
+        drag = null;
+        try { d.target.releasePointerCapture(d.id); } catch (err) {}
+        if (!d.moved) return;                         // 没有拖动 → 交给 click 事件处理
+        suppressClick = performance.now();
+        root.classList.remove('snl-dragging');
+        // 落到离松手位置最近的屏幕边缘；活动范围也跟着搬到这里
+        pos = nearestOnLoop(d.x, d.y);
+        if (bounded) {
+            var half = (rangeHi - rangeLo) / 2;
+            rangeLo = pos - half; rangeHi = pos + half;
+        }
+        dragged = true;
+        landing = { x0: pose.x, y0: pose.y, a0: pose.a, t: 0, dur: 0.22 };
+        busy = { name: 'landed', t: 0, dur: 3.4 };
+    }
+
     function onClick(e) {
         e.preventDefault();
         e.stopPropagation();
         var now = performance.now();
+        if (now - suppressClick < 400 || (busy && (busy.name === 'held' || busy.name === 'landed'))) return;
         clicks = clicks.filter(function (t) { return now - t < 2500; });
         clicks.push(now);
 
@@ -911,7 +1344,10 @@
         var out = dst.createImageData(N, N), od = out.data;
         for (var i = 0; i < idx.length; i++) {
             var pk = idx[i];
-            if (pk >= 0) { od[i * 4] = PAL[pk][0]; od[i * 4 + 1] = PAL[pk][1]; od[i * 4 + 2] = PAL[pk][2]; od[i * 4 + 3] = 255; }
+            if (pk >= 0) {
+                var col = pk >= 64 ? HATPAL[pk - 64] : PAL[pk];
+                od[i * 4] = col[0]; od[i * 4 + 1] = col[1]; od[i * 4 + 2] = col[2]; od[i * 4 + 3] = 255;
+            }
         }
         dst.putImageData(out, 0, 0);
     }
@@ -932,17 +1368,19 @@
         wavy:  { c: 0, p: [[1, 2], [2, 1]] }
     };
     var PIX_BLUSH = [[-2, 1], [-1, 1], [4, 1]];
-    function pixelFace(idx, N) {
+    // c：这一张像素图的摆法 —— N 边长、sc 每个单位多少格、ca/sa 旋转、fl 左右翻转、ax/ay 脚底中心所在的格子
+    function cellOf(c, lx, ly) {
+        var x = lx * c.fl;
+        return [Math.floor(c.ax + c.ca * x - c.sa * ly), Math.floor(c.ay + c.sa * x + c.ca * ly)];
+    }
+    function pixelFace(idx, c) {
         if (S.out < 0.8) return;
-        var sc = k / PX, f = 1, half = N / 2;
-        var hcx = Math.round((G.hx - AX) * sc), hcy = Math.round((G.hy - BASE) * sc);
-        var ar = pose.a * D2R, ca = Math.cos(ar), sa = Math.sin(ar), fl = flipShown();
+        var N = c.N, hcx = Math.round((G.hx - AX) * c.sc), hcy = Math.round((G.hy - BASE) * c.sc);
         function put(ox, oy, color) {
-            var lx = (hcx + Math.round(ox * f) + 0.5) * fl, ly = hcy + Math.round(oy * f) + 0.5;
-            var X = Math.floor(half + ca * lx - sa * ly), Y = Math.floor(half + sa * lx + ca * ly);
-            if (X < 0 || Y < 0 || X >= N || Y >= N) return;
-            var cur = idx[Y * N + X];
-            if (cur === 1 || cur === 5) idx[Y * N + X] = color;       // 只画在脸（肤色）上
+            var q = cellOf(c, hcx + ox + 0.5, hcy + oy + 0.5);
+            if (q[0] < 0 || q[1] < 0 || q[0] >= N || q[1] >= N) return;
+            var cur = idx[q[1] * N + q[0]];
+            if (cur === 1 || cur === 5) idx[q[1] * N + q[0]] = color;       // 只画在脸（肤色）上
         }
         var fc = face(), i;
         for (i = 0; i < PIX_BLUSH.length; i++) put(PIX_BLUSH[i][0], PIX_BLUSH[i][1], 5);
@@ -951,6 +1389,62 @@
         var mo = PIX_MOUTH[fc.m] || PIX_MOUTH.smile;
         if (fc.m === 'open' && fc.open < 0.35) mo = PIX_MOUTH.smile;
         for (i = 0; i < mo.p.length; i++) put(mo.p[i][0], mo.p[i][1], mo.c);
+    }
+
+    // ---------- 帽子 ----------
+    // 每顶帽子是一小张像素图：一行字符串是一行像素，字母对应下面的颜色，'.' 是透明。想加新帽子照着加一项就行
+    var HATCOL = { K: '#231a14', Y: '#e8c46a', y: '#c39a3e', R: '#d9534f', W: '#fbf6ea', B: '#5b7fc4', G: '#86a86c', g: '#5d7d4c',
+                   P: '#f0a19c', O: '#f2c84b', D: '#3f3f4c', d: '#5a5a6a' };
+    var HATS = {
+        straw:  { name: '草帽',   px: ['...KKKKK...', '..KYYYYYK..', '..KRRRRRK..', 'KKYYYYYYYKK', 'KyyyyyyyyyK', '.KKKKKKKKK.'] },
+        top:    { name: '礼帽',   px: ['..KKKKK..', '..KDdDK..', '..KDdDK..', '..KRRRK..', 'KKKDDDKKK', 'KDDDDDDDK', '.KKKKKKK.'] },
+        crown:  { name: '皇冠',   px: ['K..K.K..K', 'KK.KOK.KK', 'KOKOOOKOK', 'KOROBOROK', 'KKKKKKKKK'] },
+        bow:    { name: '蝴蝶结', px: ['KK...KK', 'KRK.KRK', 'KRRKRRK', 'KRK.KRK', 'KK...KK'], dy: 1 },
+        party:  { name: '派对帽', px: ['...K...', '..KOK..', '..KPK..', '.KPBPK.', '.KBPBK.', 'KPBPBPK', 'KKKKKKK'] },
+        sprout: { name: '小芽',   px: ['.KK...KK.', 'KGGK.KGGK', 'KGgGKGgGK', '.KKgKgKK.', '...KgK...', '...KgK...'] }
+    };
+    var HATKEYS = Object.keys(HATCOL), HATPAL = HATKEYS.map(function (ch) {
+        var h = HATCOL[ch];
+        return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)];
+    });
+    function currentHat() {
+        var h = me.hat !== undefined && me.hat !== null ? me.hat : (CONFIG.hat || '');
+        return HATS[h] ? h : '';
+    }
+    // 把帽子画到像素格上：平时戴在头顶；缩进壳里的时候，帽子留在壳顶上
+    function pixelHat(idx, c) {
+        var hat = HATS[currentHat()];
+        if (!hat) return;
+        var N = c.N, w = hat.px[0].length, h = hat.px.length, bx, by;
+        if (S.out >= 0.8) { bx = Math.round((G.hx - AX) * c.sc) - 1; by = Math.round((G.hy - BASE) * c.sc) - 5 + (hat.dy || 0); }
+        else { bx = Math.round((SH.cx - AX) * c.sc) + 1; by = Math.round((SH.top + 2.5 - BASE) * c.sc) + 1; }
+        for (var j = 0; j < h; j++) for (var i = 0; i < w; i++) {
+            var ch = hat.px[j].charAt(i);
+            if (ch === '.') continue;
+            var q = cellOf(c, bx - Math.floor(w / 2) + i + 0.5, by - h + j + 0.5);
+            if (q[0] < 0 || q[1] < 0 || q[0] >= N || q[1] >= N) continue;
+            idx[q[1] * N + q[0]] = 64 + HATKEYS.indexOf(ch);
+        }
+    }
+    function hatCanvas(id, scale) {          // 一顶帽子的小图标
+        var hat = HATS[id], cv = document.createElement('canvas'), w = hat.px[0].length, h = hat.px.length;
+        cv.width = w; cv.height = h;
+        cv.style.width = w * scale + 'px'; cv.style.height = h * scale + 'px';
+        var x = cv.getContext('2d');
+        for (var j = 0; j < h; j++) for (var i = 0; i < w; i++) {
+            var ch = hat.px[j].charAt(i);
+            if (ch !== '.') { x.fillStyle = HATCOL[ch]; x.fillRect(i, j, 1, 1); }
+        }
+        return cv;
+    }
+    function rebuildHatSvg() {               // 手绘风时的帽子：用一个个小方块拼出来
+        while (P.hat.firstChild) P.hat.removeChild(P.hat.firstChild);
+        var hat = HATS[currentHat()];
+        if (!hat || PX) return;
+        for (var j = 0; j < hat.px.length; j++) for (var i = 0; i < hat.px[j].length; i++) {
+            var ch = hat.px[j].charAt(i);
+            if (ch !== '.') el('rect', { x: i, y: j, width: 1.02, height: 1.02, fill: HATCOL[ch] }, P.hat);
+        }
     }
 
     function applyTf(c, str) {
@@ -1011,22 +1505,60 @@
         c.restore();
     }
 
+    // 把当前的蜗牛画成一张 N×N 的像素图（返回调色板索引）
+    function renderSprite(work, wc, N, sc, angDeg, fl, ax, ay) {
+        var sp = sc * SS;
+        wc.setTransform(1, 0, 0, 1, 0, 0);
+        wc.clearRect(0, 0, work.width, work.height);
+        wc.translate(ax * SS, ay * SS);
+        wc.rotate(angDeg * D2R);
+        wc.scale(fl * sp, sp);
+        wc.translate(-AX, -BASE);
+        var pv = P.face.getAttribute('visibility'), ph = P.hat.getAttribute('visibility');
+        P.face.setAttribute('visibility', 'hidden');            // 五官和帽子不走矢量，后面直接按像素画
+        P.hat.setAttribute('visibility', 'hidden');
+        paintNode(wc, P.art, 1);
+        if (pv === null) P.face.removeAttribute('visibility'); else P.face.setAttribute('visibility', pv);
+        if (ph === null) P.hat.removeAttribute('visibility'); else P.hat.setAttribute('visibility', ph);
+        var ar = angDeg * D2R, c = { N: N, sc: sc, ca: Math.cos(ar), sa: Math.sin(ar), fl: fl, ax: ax, ay: ay };
+        var idx = quantize(wc, N);
+        pixelFace(idx, c);
+        pixelHat(idx, c);
+        return idx;
+    }
+
     function paintPixels() {
-        var s = k / PX * SS, half = PN / 2;
+        var half = PN / 2;
         // 蜗牛的位置对齐到像素格 → 像素不会在移动时闪烁；旋转画在画布里面 → 爬到侧边、转角时像素依然是横平竖直的
         var ax = Math.round(pose.x / PX), ay = Math.round(pose.y / PX);
         pcv.style.transform = 'translate(' + ((ax - half) * PX) + 'px,' + ((ay - half) * PX) + 'px)';
-        wctx.setTransform(1, 0, 0, 1, 0, 0);
-        wctx.clearRect(0, 0, wcv.width, wcv.height);
-        wctx.translate(half * SS, half * SS);
-        wctx.rotate(pose.a * D2R);
-        wctx.scale(flipShown() * s, s);
-        wctx.translate(-AX, -BASE);
-        P.face.setAttribute('visibility', 'hidden');            // 五官不走矢量，后面直接按像素画
-        paintNode(wctx, P.art, 1);
-        var idx = quantize(wctx, PN);
-        pixelFace(idx, PN);
-        blit(idx, PN, pctx);
+        blit(renderSprite(wcv, wctx, PN, k / PX, pose.a, flipShown(), half, half), PN, pctx);
+    }
+
+    // 给菜菜拍一张照片：摆一个标准的爬行姿势（戴着现在的帽子），画到信息面板里的相框上
+    var photoWork = null, photoTmp = null;
+    function takePhoto(target) {
+        var N = 48;
+        if (!photoWork) {
+            photoWork = document.createElement('canvas'); photoWork.width = photoWork.height = N * SS;
+            photoTmp = document.createElement('canvas'); photoTmp.width = photoTmp.height = N;
+        }
+        // 暂时把姿势换成“标准照”，拍完再换回来（同一帧内完成，屏幕上的蜗牛不受影响）
+        var keep = { S: S, state: state, busy: busy, hold: hold, blinking: blinking };
+        S = { out: 1, ext: 0.9, lift: 0.12, dip: 0, tl: [1, 1], low: 1, amp: 0, speed: 0, flip: 1, munch: 0, squeeze: 0, epi: 0 };
+        state = { name: 'crawl', t: 0, dur: 9 }; busy = null; hold = [0, 0]; blinking = 0;
+        render();
+        var idx = renderSprite(photoWork, photoWork.getContext('2d', { willReadFrequently: true }), N, 1 / PIX_UNIT, 0, 1, 24, 41);
+        S = keep.S; state = keep.state; busy = keep.busy; hold = keep.hold; blinking = keep.blinking;
+        render();
+        blit(idx, N, photoTmp.getContext('2d'));
+        var x = target.getContext('2d');
+        x.imageSmoothingEnabled = false;
+        x.fillStyle = '#e4efd6'; x.fillRect(0, 0, 48, 36);                 // 背景
+        x.fillStyle = '#f3f8ea'; x.fillRect(5, 5, 9, 3); x.fillRect(8, 3, 5, 2); x.fillRect(30, 8, 10, 3); x.fillRect(33, 6, 5, 2);   // 两朵云
+        x.fillStyle = '#c5d9ac'; x.fillRect(0, 33, 48, 3);                 // 草地
+        x.fillStyle = '#a9c48c'; x.fillRect(3, 32, 1, 1); x.fillRect(11, 32, 1, 1); x.fillRect(40, 32, 1, 1); x.fillRect(45, 32, 1, 1);
+        x.drawImage(photoTmp, 0, 8, 48, 36, 0, 0, 48, 36);
     }
 
     function drawTrailPixel(now) {
@@ -1127,15 +1659,32 @@
         if (S.speed > 0.05 && S.out > 0.9) {
             pos += dir * S.speed * dt;
             phase += dt * 2.6 * (S.speed / Math.max(1, CONFIG.speed));
-            if (loop) pos = ((pos % LEN) + LEN) % LEN;
+            if (!bounded) pos = ((pos % LEN) + LEN) % LEN;
         }
-        if (!loop) {
-            var m = 50 * k;
-            if (pos < m) { pos = m; if (state.name === 'crawl' && dir < 0) setState('turn'); }
-            if (pos > LEN - m) { pos = LEN - m; if (state.name === 'crawl' && dir > 0) setState('turn'); }
+        if (bounded) {
+            var lo = rangeLo + rangeM, hi = rangeHi - rangeM;
+            if (pos < lo) { pos = lo; if (state.name === 'crawl' && dir < 0) setState('turn'); }
+            if (pos > hi) { pos = hi; if (state.name === 'crawl' && dir > 0) setState('turn'); }
         }
-        pose = pointAt(pos);
-        if (S.speed > 0.5) addTrail(now);
+        if (drag && drag.moved) {
+            // 被拖着：捏着壳跟着指针走，身体的朝向慢慢转向最近的那条边（预览它会落在哪儿）
+            var np = pointAt(nearestOnLoop(drag.x, drag.y));
+            var na = pose.a + angDiff(np.a, pose.a) * (1 - Math.exp(-9 * dt));
+            var nr = na * D2R, lx = (SH.cx - AX) * k * flipShown(), ly = (SH.cy - BASE) * k;
+            var tx0 = -(Math.cos(nr) * lx - Math.sin(nr) * ly), ty0 = -(Math.sin(nr) * lx + Math.cos(nr) * ly);
+            var bl = 1 - Math.exp(-10 * dt);
+            drag.ox += (tx0 - drag.ox) * bl; drag.oy += (ty0 - drag.oy) * bl;
+            pose = { x: drag.x + drag.ox, y: drag.y + drag.oy, a: na };
+        } else if (landing) {
+            // 松手：滑到最近的屏幕边缘上
+            landing.t += dt;
+            var lu = clamp(landing.t / landing.dur, 0, 1), lf = 1 - Math.pow(1 - lu, 3), tg = pointAt(pos);
+            pose = { x: lerp(landing.x0, tg.x, lf), y: lerp(landing.y0, tg.y, lf), a: landing.a0 + angDiff(tg.a, landing.a0) * lf };
+            if (lu >= 1) { landing = null; wob = 7; pose = tg; }
+        } else {
+            pose = pointAt(pos);
+        }
+        if (S.speed > 0.5 && S.out > 0.9 && !landing && !(drag && drag.moved)) addTrail(now);   // 被拖着的时候不留黏液
     }
 
     function drawStalk(i, bx, by, ang, len, ph, st) {
@@ -1170,6 +1719,7 @@
             else if (busy.name === 'startle') { e = 'wide'; m = 'o'; }
             else if (busy.name === 'foam') { e = 'squeeze'; m = 'wavy'; }
             else if (busy.name === 'wake') { e = 'line'; m = 'o'; }
+            else if (busy.name === 'held' || busy.name === 'landed') { e = 'wide'; m = 'o'; }
         } else {
             var n = state.name;
             if (n === 'rest') e = 'line';
@@ -1225,6 +1775,14 @@
         setEye(P.eyeL, hx + 1.4 * fs, hy - 1 * fs, fc.e, false);
         setEye(P.eyeR, hx + 7.4 * fs, hy - 1.4 * fs, fc.e, true);
         setMouth(P.mouth, hx + 4.6 * fs, hy + 3.2 * fs, fc.m, fc.open);
+        if (!PX) {
+            var hatDef = HATS[currentHat()];
+            if (hatDef) {
+                var hw = hatDef.px[0].length, hh = hatDef.px.length, U = PIX_UNIT;
+                var hbx = o >= 0.8 ? hx - U : SH.cx + U, hby = o >= 0.8 ? hy - 5 * U + (hatDef.dy || 0) * U : SH.top + 2.5 + U;
+                P.hat.setAttribute('transform', 'translate(' + n2(hbx - Math.floor(hw / 2) * U) + ' ' + n2(hby - hh * U) + ') scale(' + U + ')');
+            }
+        }
 
         // 触角：身体完全伸出来之后才慢慢展开
         var vis = clamp((o - 0.55) / 0.45, 0, 1);
@@ -1244,8 +1802,10 @@
         last = now;
         if (!hidden) {
             time += dt;
+            updateTopBar(dt, now);
             update(dt, now);
             render();
+            if (now - lastSave > 500) { lastSave = now; saveState(); }
             if (PX) paintPixels();
             drawTrail(now);
         }
@@ -1254,9 +1814,20 @@
 
     function init() {
         build();
+        W = document.documentElement.clientWidth || window.innerWidth;
+        H = window.innerHeight;
+        topInset = topTarget = detectTopBar();         // 页面一打开就有固定导航条的话，直接从它的下沿算起
         layout();
-        setState('rest');
-        state.dur = 2.5;           // 一开始缩在壳里，然后慢慢探出头来
+        var saved = loadState();
+        loadMe(saved && saved.me);
+        rebuildHatSvg();
+        buildInfo();
+        if (saved) {
+            restoreState(saved);                       // 从上一个页面接着来
+        } else {
+            setState('rest');
+            state.dur = 2.5;                           // 第一次出现：缩在壳里，然后慢慢探出头来
+        }
         pose = pointAt(pos);
         render();
 
@@ -1264,11 +1835,19 @@
             layout();
             poops.forEach(removeEl);
             poops = [];
+            if (panel && panel.classList.contains('snl-open')) placeInfo();
         });
         window.addEventListener('mousemove', function (e) {
             mouse.x = e.clientX; mouse.y = e.clientY; mouse.on = true;
         }, { passive: true });
         document.addEventListener('mouseleave', function () { mouse.on = false; });
+        window.addEventListener('scroll', function () {
+            topCheck = 0;                                              // 滚动后马上重新看一眼导航条
+            if (panel && panel.classList.contains('snl-open')) placeInfo();
+        }, { passive: true });
+        window.addEventListener('pagehide', saveState);
+        window.addEventListener('beforeunload', saveState);
+        document.addEventListener('visibilitychange', function () { if (document.hidden) saveState(); });
 
         requestAnimationFrame(frame);
     }
@@ -1278,6 +1857,11 @@
         act: function (name) {
             if (name === 'sleep' || name === 'crawl' || name === 'rest' || name === 'explore' || name === 'turn') { busy = null; setState(name); }
             else if (/^(chirp|startle|poop|eat|foam|wake)$/.test(name)) startBusy(name);
+        },
+        forget: function () {          // 清掉记住的状态，下次打开页面时蜗牛从默认位置重新开始
+            forgot = true;
+            try { window.sessionStorage.removeItem(SAVE_KEY); } catch (e) {}
+            try { if (window.name.indexOf(SAVE_KEY) === 0) window.name = ''; } catch (e) {}
         },
         hide: function () {
             hidden = true;
