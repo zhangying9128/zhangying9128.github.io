@@ -702,7 +702,7 @@
         bar.setAttribute('aria-expanded', 'false');
         mk('span', 'snl-dot', null, bar);
         UI.barText = mk('span', '', '', bar);
-        bar.addEventListener('click', function (e) { e.preventDefault(); if (panel.classList.contains('snl-open')) closePanel(); else openPanel(); });
+        bar.addEventListener('click', function (e) { e.preventDefault(); openPanel(); });     // 只负责打开；关闭只能点面板上的 ×
 
         panel = mk('div', 'snl-panel', null, document.body);
         panel.setAttribute('role', 'dialog');
@@ -735,12 +735,8 @@
         // 衣柜
         pg = UI.pages.hats = mk('div', 'snl-page', null, panel);
         UI.hats = mk('div', 'snl-hats', null, pg);
-        //mk('div', 'snl-dim snl-small', '帽子只存在你自己的浏览器里，别人看到的还是它原来的样子。', pg).style.marginTop = '10px';
+        mk('div', 'snl-dim snl-small', '帽子只存在你自己的浏览器里，别人看到的还是它原来的样子。', pg).style.marginTop = '10px';
 
-        document.addEventListener('pointerdown', function (e) {       // 点面板外面就收起来
-            if (panel.classList.contains('snl-open') && !panel.contains(e.target) && !bar.contains(e.target)) closePanel();
-        });
-        document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closePanel(); });
         window.setInterval(tickInfo, 1000);
         placeInfo();
         tickInfo();
@@ -751,7 +747,7 @@
         if (inNav) {
             // 在导航栏里：面板从这一项的正下方垂下来，右边缘对齐这一项（放不下就贴着屏幕边）
             var rc = bar.getBoundingClientRect();
-            if (!rc.width && !rc.height) { closePanel(); return; }        // 这一项被收起来了（比如手机上折叠的菜单）
+            if (!rc.width && !rc.height) return;                          // 这一项被收起来了（比如手机上折叠的菜单）：面板留在原地
             var top = Math.max(gap, rc.bottom + 8), pw = Math.min(252, W - 2 * gap);
             panel.style.top = top + 'px';
             panel.style.bottom = 'auto';
@@ -836,7 +832,8 @@
             out: held ? 0 : S.out, ext: S.ext, lift: S.lift, tl: S.tl, low: S.low, epi: S.epi,
             state: (busy || state.name === 'turn' || state.name === 'curious') ? 'rest' : state.name,
             st: busy ? 0 : state.t, sd: busy ? 1.5 : state.dur,
-            food: lastFood, poop: poopTimer, me: me
+            food: lastFood, poop: poopTimer, me: me,
+            panel: (panel && panel.classList.contains('snl-open')) ? curTab : ''       // 面板开着的话，换页面后也接着开着
         };
         var str = JSON.stringify(data);
         try { window.sessionStorage.setItem(SAVE_KEY, str); } catch (e) {}
@@ -1830,6 +1827,7 @@
         }
         pose = pointAt(pos);
         render();
+        if (saved && saved.panel && panel) { curTab = UI.tabs[saved.panel] ? saved.panel : 'info'; openPanel(); }   // 上一个页面里面板开着 → 接着开着
 
         window.addEventListener('resize', function () {
             layout();
