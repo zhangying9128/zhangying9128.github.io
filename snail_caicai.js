@@ -16,7 +16,7 @@
     // ===== 可调整的设置 =====
     var CONFIG = {
         size: 50,          // 蜗牛大小（px）。想放大或缩小就改这个数
-        mobileSize: 30,    // 窄屏（宽度 < 600px）时的大小
+        mobileSize: 50,    // 窄屏（宽度 < 600px）时的大小
         speed: 2,         // 爬行速度（px/秒）
         route: 'bottom-right',  // 爬行范围：屏幕的 1/4 —— 'bottom-right' 右下 / 'bottom-left' 左下 / 'top-right' 右上 / 'top-left' 左上
                                 //           （沿这个角的两条边来回爬）；'all' = 沿四条边绕圈；'bottom' = 只在底边来回爬
