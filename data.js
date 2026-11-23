@@ -6,6 +6,7 @@ const publications = [
         venue: "The 20th Conference of the European Chapter of the Association for Computational Linguistics (EACL 2027)",
         links: [
             { text: "paper", url: "https://arxiv.org/abs/2505.16178" },
+            { text: "poster", url: "https://drive.google.com/drive/folders/1RRe-_kMuc_6z7bRrSmIv78FWGOlz-X09?usp=sharing" }
         ]
     },
     {
